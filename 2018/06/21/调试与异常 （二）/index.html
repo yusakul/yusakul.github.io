@@ -8,17 +8,17 @@
   <link rel="dns-prefetch" href="http://yoursite.com">
   <title>Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="调试与异常 （一）概念 反调试的目的是什么？  阻拦逆向工作者分析自己的代码   什么是静态反调试？什么是动态反调试？分别都有那些？ 静态的只要在开始破解一次就可解除全部反调试限制。  PEB（进程环境块）   12345&amp;gt; mov   eax,   dword ptr  FS:[0x30]           //直接获取PEB的地址，&amp;gt; 或者&amp;gt; mov   eax,  dwo">
+  <meta name="description" content="调试与异常 （二）概念 反调试的目的是什么？  阻拦逆向工作者分析自己的代码   什么是静态反调试？什么是动态反调试？分别都有那些？ 静态的只要在开始破解一次就可解除全部反调试限制。  PEB（进程环境块）   12345&amp;gt; mov   eax,   dword ptr  FS:[0x30]           //直接获取PEB的地址，&amp;gt; 或者&amp;gt; mov   eax,  dwo">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hexo">
 <meta property="og:url" content="http://yoursite.com/2018/06/21/调试与异常 （二）/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="调试与异常 （一）概念 反调试的目的是什么？  阻拦逆向工作者分析自己的代码   什么是静态反调试？什么是动态反调试？分别都有那些？ 静态的只要在开始破解一次就可解除全部反调试限制。  PEB（进程环境块）   12345&amp;gt; mov   eax,   dword ptr  FS:[0x30]           //直接获取PEB的地址，&amp;gt; 或者&amp;gt; mov   eax,  dwo">
+<meta property="og:description" content="调试与异常 （二）概念 反调试的目的是什么？  阻拦逆向工作者分析自己的代码   什么是静态反调试？什么是动态反调试？分别都有那些？ 静态的只要在开始破解一次就可解除全部反调试限制。  PEB（进程环境块）   12345&amp;gt; mov   eax,   dword ptr  FS:[0x30]           //直接获取PEB的地址，&amp;gt; 或者&amp;gt; mov   eax,  dwo">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-06-21T08:54:27.719Z">
+<meta property="og:updated_time" content="2018-06-21T08:59:25.704Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hexo">
-<meta name="twitter:description" content="调试与异常 （一）概念 反调试的目的是什么？  阻拦逆向工作者分析自己的代码   什么是静态反调试？什么是动态反调试？分别都有那些？ 静态的只要在开始破解一次就可解除全部反调试限制。  PEB（进程环境块）   12345&amp;gt; mov   eax,   dword ptr  FS:[0x30]           //直接获取PEB的地址，&amp;gt; 或者&amp;gt; mov   eax,  dwo">
+<meta name="twitter:description" content="调试与异常 （二）概念 反调试的目的是什么？  阻拦逆向工作者分析自己的代码   什么是静态反调试？什么是动态反调试？分别都有那些？ 静态的只要在开始破解一次就可解除全部反调试限制。  PEB（进程环境块）   12345&amp;gt; mov   eax,   dword ptr  FS:[0x30]           //直接获取PEB的地址，&amp;gt; 或者&amp;gt; mov   eax,  dwo">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -159,7 +159,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="调试与异常-（一）"><a href="#调试与异常-（一）" class="headerlink" title="调试与异常 （一）"></a>调试与异常 （一）</h3><h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><ol>
+        <h3 id="调试与异常-（二）"><a href="#调试与异常-（二）" class="headerlink" title="调试与异常 （二）"></a>调试与异常 （二）</h3><h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><ol>
 <li><p>反调试的目的是什么？</p>
 <ul>
 <li>阻拦逆向工作者分析自己的代码</li>
