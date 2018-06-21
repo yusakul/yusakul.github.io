@@ -1,282 +1,172 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="调试与异常 （二）"><meta name="keywords" content=""><meta name="author" content="梁言,undefined"><meta name="copyright" content="梁言"><title>调试与异常 （二） | Hexo</title><link rel="shortcut icon" href="/favicon.ico"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.6.0/css/reveal.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.6.0/css/theme/black.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.6.0/lib/css/zenburn.min.css"></head><body><div class="reveal"><div class="slides"><section data-markdown data-separator="---" data-separator-vertical="--" data-charset="utf-8"><script type="text/template">
-### 调试与异常 （二）
-
-#### 概念
-
-1. 反调试的目的是什么？
-
-   - 阻拦逆向工作者分析自己的代码
-
-2. 什么是静态反调试？什么是动态反调试？分别都有那些？
-
-   静态的只要在开始破解一次就可解除全部反调试限制。
-
-   - PEB（进程环境块）
-
-   > ```C 
-   > mov   eax,   dword ptr  FS:[0x30]           //直接获取PEB的地址，
-   > 或者
-   > mov   eax,  dword ptr  Fs:[0x18]            //TEB的起始地址
-   > mov   eax , dword  ptr  ds:[eax+30]      	//PEB的地址
-   > ```
-   >
-   > - BeingDebugged(0x2)：调试标记位
-   >
-   > > 调试状态下，PEB.BeingDebugged 成员（0x2）的值设置为1。
-   > > 非调试状态下，其值设置为0.
-   > > IsDebuggerPresent()  API 来获取PEB.BeingDebugged的值来判断进程是否处于被调试状态。
-   > >
-   > > **破解之法：**
-   > >
-   > > 借助ollydbg调试器的编辑功能，将PEB.BeingDebugged的值修改为0即可
-   >
-   > - ldr(0xc)：内存状态
-   >
-   > >调试进程时，堆内存中会出现一些特殊标识，表示正处于被调试状态，其中最醒目的就是未使用的堆内存区域全部填充着0xFEEEFEEE。根据这一原理，我们可以判断进程是否处于调试状态。
-   > >根据相应的偏移位置找到PEB.ldr位置，查找0xFEEEFEEE，
-   > >
-   > >**破解之法：**
-   > >
-   > >将填充着0xFEEEFEEE的区域全部覆盖为NULL即可
-   > >注意：该方法只适用windows xp系统，在vista 之后的系统则无法使用。另外，利用附加进程将运行中的进程附加到调试器，堆内存也不会出现上述标识。
-   >
-   > - Process  Heap（0x18）：堆状态
-   >
-   > > PEB.ProcessHeap成员是指向HEAD结构体的指针。其中比较重要的是Flags(+0xC)成员和Force Flags(+0x10).
-   > >
-   > > ```c++
-   > > mov   eax,  dword ptr  fs:[0x18]            //TEB的起始地址
-   > > mov   eax , dword  ptr  ds:[eax+30]      //PEB的地址
-   > > mov   eax , dword  ptr  ds:[eax+18]      //PEB.Processheap的地址。
-   > > ```
-   > >
-   > > 进程正常运行时，heap.flags的值为0x2.heap.Forceflags的值为0x0.。进程被调试时这些值都会改变。所以比较这些值就可以判断进程是否被调试。
-   > >
-   > > **破解之法：**
-   > >
-   > > 将heap.flags的值修改为0x2.   heap.Forceflags的值修改为0x0。
-   > > 注意：该方法只适用windows xp系统，在win7之后的系统则无法使用。另外，利用附加进程将运行中的进程附加到调试器，堆内存也不会出现上述标识。
-   >
-   > - NtGlobalFlag(0x68)：全局标记
-   >
-   > >调试进程时，PEB.NtGlobalFlag成员的值会被设置为0x70.所以检测该成员的值即可判断是否处于被调试状态。NtGlobalFlag 0x70是flags值进行位或运算的结果。
-   > >被调试进程的堆内存中存在特殊标识，所以在成员中添加了上述标识。
-   > >
-   > >**破解之法：**
-   > >
-   > >将PEB.NtGlobalFlag的值设为0即可。
-
-   - 使用原始API
-
-   > - NtqueryInformationProcess()
-   >
-   >   通过NtqueryInformationProcess  API可以获取各种与进程调试相关的信息。
-   >   函数定义中有几个重要的成员:
-   >
-   >   > ProcessDebugPort(0x7)：获取调试端口
-   >   >
-   >   > ProcessDebugObjectHandle(0x1E)：获取调试句柄
-   >   >
-   >   > ProcessDebugFlags(0x1F)：获取调试标记
-   >   >
-   >   > **破解**
-   >   >
-   >   > 使用CheckRemoteDebuggerPresent() API,可以查看是否调用NtqueryInformationProcess()。
-   >
-   > > - ProcessDebugPort(0x7)：获取调试端口
-   > >
-   > > >  进程处于调试状态，系统会为它分配一个调试端口，ProcessInformationClass参数的值为ProcessDebugPort（0 x7）, 若程序处于非调试状态，则变量dwDebugPort的值设置为0，若进程处于调试状态，则值设置为0xFFFFFFF.
-   > >
-   > > - ProcessDebugObjectHandle(0x1E)：获取调试句柄
-   > >
-   > > > 调试进程时会生成调试对象，函数的第二个参数值为ProcessDebugObjectHandle，调用参数后就能获取调试对象句柄，进程处于调试状态时，调试对象句柄的值就存在，若进程处于非调试状态，则调试对象句柄值为NULL.
-   > >
-   > > - ProcessDebugFlags(0x1F)：获取调试标记
-   > >
-   > > > 检测debug flag调试标志的值也可以判断是否处于被调试状态，函数 的第二个参数设置为processdebugflag(0x1)时，调用函数后通过第三个参数即可获的调试标志的值，若为0，则进程处于被调试状态，若为1，则进程处于非调试状态。
-   >
-   > - NtquerySystemInformation()
-   >
-   >   ntdll!NtquerySystemInformation（）API是一个系统函数，用来获取当前运行的多种OS信息。
-   >
-   > > - 向SystemInformationclass参数传入Systemkerneldebuggerinformation的值（0X23）即可判断出当前系统是否处于调试模式下进行。
-   > >   当API返回时，若系统处在调试模式下，第二个参数的值设置为1，
-   > >   **破解之法：**
-   > >
-   > >   > windows xp系统中编辑boot.ini文件，删除  "/debugport=com1 /baudrate=115200  /Debug"值。
-   > >
-   > >   > windows 7系统的命令窗口执行bsdedit/debug off 命令即可。并且若重启系统则要以正常模式启动。
-   >
-   > - NTQueryObject()
-   >
-   >   系统中的某个调试器调试进程时，会创建一个调试对象类型的内核对象。检测该对象是否存在课判断是否有进程正在被调试。
-   >
-   >   > ntdll!NtqueryObject()API用来获取各种内核对象的信息
-   >
-   >   > **破解之法：**钩取API
-   >
-   > - ZwSetInformationThread()
-   >
-   >   强制分离被调试者和调试器的技术。利用ZwSetInformationThread()API可将被调试者和调试器分离出来。
-   >
-   >   > 该函数是一个原生API,用来为线程设置信息的，有两个参数，一是用来接收线程的句柄，二是表示线程信息类型，若其值设置为threadhideformdebugger(0x11),调用该函数后，调试进程就会被分离出来。
-   >
-   >   > **破解之法：**
-   >   >
-   >   > 把threadhideformdebugger(0x11)的值修改为0后继续运行即可。当然也可以钩取相应的API.
-   >   >
-   >   > 提示：其工作原理是将线程隐藏起来，调试器就接收不到信息，从而无法调试。而且，windows Xp之后新增了DebugActiveProcessstop（)API.
-
-   - TLS回调函数
-   - ETC
-
-   > 很多反调试技术是借助win32API获取系统信息来实现。
-   > 检测ollydbg窗口       findWindow()
-   > 检测ollydbg进程        createToolhelp32snapshot（）
-   > 检测计算机名称是否为“Test”，“analysis”,等   getcomputername()
-   > 检测程序运行路径中是否存在“test”,"sample".等名称   getcomandline()
-   > 检测虚拟机是否处于运行状态，虚拟机特有的进程名称   vmwareservice.exe   vmwareTray.exe  vmwareUser.exe
-
-   - 攻击调试器
-
-   > - NtSetInformationThread()
-   >   - ThreadHideFormDebugger(0x11)
-
-   - 打开进程检查
-
-   > - SeDebugPrivilege：检查进程是否具有调试权限
-
-#### 实验
-
-- SHE反调试
-
-```c++
-// SEH_AntiDebug_Native.cpp : 定义控制台应用程序的入口点。
-//
-
-#include "stdafx.h"
-#include <windows.h>
-#pragma warning(disable: 4733) // 忽略“内联 asm 分配到FS:0”错误
-void (*g_funExceptionReturn)() = nullptr;
-
-
-
-void RightFun()
-{
-    MessageBox(0,L"正常运行！",L"SEH反调试测试",MB_OK);
-    // 删除异常处理器
-    //     运行至此处时栈顶的信息是EXCEPTION_REGISTRATION_RECORD，里面
-    // 保存着其最初运行的已成处理器，我们将其保存到FS:[0]处后就相当于
-    // 摘除了前面注册的SEH异常链信息。
-    __asm pop dword ptr fs:[0];
-    g_funExceptionReturn();
-}
-
-
-
-void WrongFun()
-{
-    MessageBox(0,L"检测到调试器！",L"SEH反调试测试",MB_OK);
-    // 删除异常处理器
-    //     运行至此处时栈顶的信息是EXCEPTION_REGISTRATION_RECORD，里面
-    // 保存着其最初运行的已成处理器，我们将其保存到FS:[0]处后就相当于
-    // 摘除了前面注册的SEH异常链信息。
-    __asm pop dword ptr fs:[0];
-}
-
-
-
-EXCEPTION_DISPOSITION ExpHandel_A(
-    EXCEPTION_RECORD              *pExceptionRecord,   // 异常状态描述
-    EXCEPTION_REGISTRATION_RECORD *pEstablisherFrame,  // 异常注册框架
-    CONTEXT                       *pContextRecord,     // 返回线程上下文
-    PVOID                         pDispatcherContext ) // 分发器上下文（系统使用，无需关注）
-{
-    // 1. 获取调试标志位
-    BYTE IsBeginDebug = false; 
-    __asm {
-        push eax;
-        mov eax, dword ptr fs:[0x30]; // 获取PEB
-        mov al,byte ptr ds:[eax+2]; // 获取PEB.BeginDebug
-        mov IsBeginDebug,al;
-        pop eax;
-    };
-	
-    // 2. 备份正确的异常返回地址
-    g_funExceptionReturn = (void (*)())pContextRecord->Eip;
-
-    // 3. 根据标志位执行不同的SEH异常处理流程
-    if ( IsBeginDebug )
-        pContextRecord->Eip = (DWORD)WrongFun;
-    else
-        pContextRecord->Eip = (DWORD)RightFun;
-
-    // 4. 返回“已经正常处理”
-    return ExceptionContinueExecution;
-}
-
-
-
-EXCEPTION_DISPOSITION ExpHandel_B(
-    EXCEPTION_RECORD              *pExceptionRecord,   // 异常状态描述
-    EXCEPTION_REGISTRATION_RECORD *pEstablisherFrame,  // 异常注册框架
-    CONTEXT                       *pContextRecord,     // 返回线程上下文
-    PVOID                         pDispatcherContext ) // 分发器上下文（系统使用，无需关注）
-{
-    // 返回“运行下一个异常处理器”
-    return ExceptionContinueSearch;
-}
-
-
-int _tmain(int argc, _TCHAR* argv[])
-{
-    // 1. 添加SEH异常链
-    // 以下异常链添加完成后为：
-    // [Start]                                                                  [End]
-    // *-------------*    *-------------*    *------------*            *------------* 
-    // | Next -------+--> | Next -------+--> | Next ------+--> ... --> | 0xFFFFFFFF |
-    // | ExpHandel_B |    | ExpHandel_A |    | ?????????? |            | ?????????? |    
-    // *-------------*    *-------------*    *------------*            *------------*    
-	__asm{ /* 添加SEH异常链A */ 
-        push ExpHandel_A;
-        push dword ptr fs:[0];
-        mov dword ptr fs:[0],esp;
-    };
-    __asm{ /* 添加SEH异常链B */   
-        push ExpHandel_B;
-        push dword ptr fs:[0];
-        mov dword ptr fs:[0],esp;
-    };
-
-    // 2. 人为制造异常
-    int *pTest = nullptr;
-    *pTest = 0;
-
-	return 0;
-}
-```
-
-</script></section></div></div><script src="https://cdn.jsdelivr.net/npm/reveal.js@3.6.0/lib/js/head.min.js"></script><script src="https://cdn.jsdelivr.net/npm/reveal.js@3.6.0/js/reveal.min.js"></script><script>Reveal.initialize({
-  mouseWheel: false,
-  transition: 'slide',
-  transitionSpeed: 'default',
-  parallaxBackgroundImage: '',
-  parallaxBackgroundSize: '',
-  parallaxBackgroundHorizontal: '',
-  parallaxBackgroundVertical: '',
-  markdown: {
-    smartypants: true
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="调试与异常 （二）"><meta name="keywords" content=""><meta name="author" content="梁言,undefined"><meta name="copyright" content="梁言"><title>调试与异常 （二） | Hexo</title><link rel="shortcut icon" href="/favicon.ico"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css?version=1.5.5"><link rel="dns-prefetch" href="https://cdn.staticfile.org"><link rel="dns-prefetch" href="https://cdn.bootcss.com"><link rel="dns-prefetch" href="https://creativecommons.org"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
   },
-  dependencies: [
-    { src: '/js/third-party/reveal/marked.min.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-    { src: '/js/third-party/reveal/markdown.min.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-    // Syntax highlight for <code> elements
-    { src: '/js/third-party/reveal/highlight.min.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-    // Zoom in and out with Alt+click
-    { src: '/js/third-party/reveal/zoom.min.js', async: true },
-    // Speaker notes
-    { src: '/js/third-party/reveal/notes.min.js', async: true },
-    // MathJax
-    { src: '/js/third-party/reveal/math.min.js', async: true }
-  ]
-});</script></body></html>
+  localSearch: undefined
+} </script></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#调试与异常-（二）"><span class="toc-number">1.</span> <span class="toc-text">调试与异常 （二）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#概念"><span class="toc-number">1.1.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实验"><span class="toc-number">1.2.</span> <span class="toc-text">实验</span></a></li></ol></li></ol></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="/img/avatar.png"></div><div class="author-info__name text-center">梁言</div><div class="author-info__description text-center"></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">2</span></a></div></div></div><div id="content-outer"><div class="no-bg" id="top-container" style="background-image: url(true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">Hexo</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus"><a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span></div><div id="post-info"><div id="post-title">调试与异常 （二）</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-06-21</time></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><h3 id="调试与异常-（二）"><a href="#调试与异常-（二）" class="headerlink" title="调试与异常 （二）"></a>调试与异常 （二）</h3><h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><ol>
+<li><p>反调试的目的是什么？</p>
+<ul>
+<li>阻拦逆向工作者分析自己的代码</li>
+</ul>
+</li>
+<li><p>什么是静态反调试？什么是动态反调试？分别都有那些？</p>
+<p>静态的只要在开始破解一次就可解除全部反调试限制。</p>
+<ul>
+<li>PEB（进程环境块）</li>
+</ul>
+<blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt; mov   eax,   dword ptr  FS:[<span class="number">0x30</span>]           <span class="comment">//直接获取PEB的地址，</span></span><br><span class="line">&gt; 或者</span><br><span class="line">&gt; mov   eax,  dword ptr  Fs:[<span class="number">0x18</span>]            <span class="comment">//TEB的起始地址</span></span><br><span class="line">&gt; mov   eax , dword  ptr  ds:[eax+<span class="number">30</span>]      	<span class="comment">//PEB的地址</span></span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<ul>
+<li>BeingDebugged(0x2)：调试标记位</li>
+</ul>
+<blockquote>
+<p>调试状态下，PEB.BeingDebugged 成员（0x2）的值设置为1。<br>非调试状态下，其值设置为0.<br>IsDebuggerPresent()  API 来获取PEB.BeingDebugged的值来判断进程是否处于被调试状态。</p>
+<p><strong>破解之法：</strong></p>
+<p>借助ollydbg调试器的编辑功能，将PEB.BeingDebugged的值修改为0即可</p>
+</blockquote>
+<ul>
+<li>ldr(0xc)：内存状态</li>
+</ul>
+<blockquote>
+<p>调试进程时，堆内存中会出现一些特殊标识，表示正处于被调试状态，其中最醒目的就是未使用的堆内存区域全部填充着0xFEEEFEEE。根据这一原理，我们可以判断进程是否处于调试状态。<br>根据相应的偏移位置找到PEB.ldr位置，查找0xFEEEFEEE，</p>
+<p><strong>破解之法：</strong></p>
+<p>将填充着0xFEEEFEEE的区域全部覆盖为NULL即可<br>注意：该方法只适用windows xp系统，在vista 之后的系统则无法使用。另外，利用附加进程将运行中的进程附加到调试器，堆内存也不会出现上述标识。</p>
+</blockquote>
+<ul>
+<li>Process  Heap（0x18）：堆状态</li>
+</ul>
+<blockquote>
+<p>PEB.ProcessHeap成员是指向HEAD结构体的指针。其中比较重要的是Flags(+0xC)成员和Force Flags(+0x10).</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; &gt; mov   eax,  dword ptr  fs:[<span class="number">0x18</span>]            <span class="comment">//TEB的起始地址</span></span><br><span class="line">&gt; &gt; mov   eax , dword  ptr  ds:[eax+<span class="number">30</span>]      <span class="comment">//PEB的地址</span></span><br><span class="line">&gt; &gt; mov   eax , dword  ptr  ds:[eax+<span class="number">18</span>]      <span class="comment">//PEB.Processheap的地址。</span></span><br><span class="line">&gt; &gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>进程正常运行时，heap.flags的值为0x2.heap.Forceflags的值为0x0.。进程被调试时这些值都会改变。所以比较这些值就可以判断进程是否被调试。</p>
+<p><strong>破解之法：</strong></p>
+<p>将heap.flags的值修改为0x2.   heap.Forceflags的值修改为0x0。<br>注意：该方法只适用windows xp系统，在win7之后的系统则无法使用。另外，利用附加进程将运行中的进程附加到调试器，堆内存也不会出现上述标识。</p>
+</blockquote>
+<ul>
+<li>NtGlobalFlag(0x68)：全局标记</li>
+</ul>
+<blockquote>
+<p>调试进程时，PEB.NtGlobalFlag成员的值会被设置为0x70.所以检测该成员的值即可判断是否处于被调试状态。NtGlobalFlag 0x70是flags值进行位或运算的结果。<br>被调试进程的堆内存中存在特殊标识，所以在成员中添加了上述标识。</p>
+<p><strong>破解之法：</strong></p>
+<p>将PEB.NtGlobalFlag的值设为0即可。</p>
+</blockquote>
+</blockquote>
+<ul>
+<li>使用原始API</li>
+</ul>
+<blockquote>
+<ul>
+<li><p>NtqueryInformationProcess()</p>
+<p>通过NtqueryInformationProcess  API可以获取各种与进程调试相关的信息。<br>函数定义中有几个重要的成员:</p>
+<blockquote>
+<p>ProcessDebugPort(0x7)：获取调试端口</p>
+<p>ProcessDebugObjectHandle(0x1E)：获取调试句柄</p>
+<p>ProcessDebugFlags(0x1F)：获取调试标记</p>
+<p><strong>破解</strong></p>
+<p>使用CheckRemoteDebuggerPresent() API,可以查看是否调用NtqueryInformationProcess()。</p>
+</blockquote>
+</li>
+</ul>
+<blockquote>
+<ul>
+<li>ProcessDebugPort(0x7)：获取调试端口</li>
+</ul>
+<blockquote>
+<p> 进程处于调试状态，系统会为它分配一个调试端口，ProcessInformationClass参数的值为ProcessDebugPort（0 x7）, 若程序处于非调试状态，则变量dwDebugPort的值设置为0，若进程处于调试状态，则值设置为0xFFFFFFF.</p>
+</blockquote>
+<ul>
+<li>ProcessDebugObjectHandle(0x1E)：获取调试句柄</li>
+</ul>
+<blockquote>
+<p>调试进程时会生成调试对象，函数的第二个参数值为ProcessDebugObjectHandle，调用参数后就能获取调试对象句柄，进程处于调试状态时，调试对象句柄的值就存在，若进程处于非调试状态，则调试对象句柄值为NULL.</p>
+</blockquote>
+<ul>
+<li>ProcessDebugFlags(0x1F)：获取调试标记</li>
+</ul>
+<blockquote>
+<p>检测debug flag调试标志的值也可以判断是否处于被调试状态，函数 的第二个参数设置为processdebugflag(0x1)时，调用函数后通过第三个参数即可获的调试标志的值，若为0，则进程处于被调试状态，若为1，则进程处于非调试状态。</p>
+</blockquote>
+</blockquote>
+<ul>
+<li><p>NtquerySystemInformation()</p>
+<p>ntdll!NtquerySystemInformation（）API是一个系统函数，用来获取当前运行的多种OS信息。</p>
+</li>
+</ul>
+<blockquote>
+<ul>
+<li><p>向SystemInformationclass参数传入Systemkerneldebuggerinformation的值（0X23）即可判断出当前系统是否处于调试模式下进行。<br>当API返回时，若系统处在调试模式下，第二个参数的值设置为1，<br><strong>破解之法：</strong></p>
+<blockquote>
+<p>windows xp系统中编辑boot.ini文件，删除  “/debugport=com1 /baudrate=115200  /Debug”值。</p>
+</blockquote>
+<blockquote>
+<p>windows 7系统的命令窗口执行bsdedit/debug off 命令即可。并且若重启系统则要以正常模式启动。</p>
+</blockquote>
+</li>
+</ul>
+</blockquote>
+<ul>
+<li><p>NTQueryObject()</p>
+<p>系统中的某个调试器调试进程时，会创建一个调试对象类型的内核对象。检测该对象是否存在课判断是否有进程正在被调试。</p>
+<blockquote>
+<p>ntdll!NtqueryObject()API用来获取各种内核对象的信息</p>
+</blockquote>
+<blockquote>
+<p><strong>破解之法：</strong>钩取API</p>
+</blockquote>
+</li>
+<li><p>ZwSetInformationThread()</p>
+<p>强制分离被调试者和调试器的技术。利用ZwSetInformationThread()API可将被调试者和调试器分离出来。</p>
+<blockquote>
+<p>该函数是一个原生API,用来为线程设置信息的，有两个参数，一是用来接收线程的句柄，二是表示线程信息类型，若其值设置为threadhideformdebugger(0x11),调用该函数后，调试进程就会被分离出来。</p>
+</blockquote>
+<blockquote>
+<p><strong>破解之法：</strong></p>
+<p>把threadhideformdebugger(0x11)的值修改为0后继续运行即可。当然也可以钩取相应的API.</p>
+<p>提示：其工作原理是将线程隐藏起来，调试器就接收不到信息，从而无法调试。而且，windows Xp之后新增了DebugActiveProcessstop（)API.</p>
+</blockquote>
+</li>
+</ul>
+</blockquote>
+<ul>
+<li>TLS回调函数</li>
+<li>ETC</li>
+</ul>
+<blockquote>
+<p>很多反调试技术是借助win32API获取系统信息来实现。<br>检测ollydbg窗口       findWindow()<br>检测ollydbg进程        createToolhelp32snapshot（）<br>检测计算机名称是否为“Test”，“analysis”,等   getcomputername()<br>检测程序运行路径中是否存在“test”,”sample”.等名称   getcomandline()<br>检测虚拟机是否处于运行状态，虚拟机特有的进程名称   vmwareservice.exe   vmwareTray.exe  vmwareUser.exe</p>
+</blockquote>
+<ul>
+<li>攻击调试器</li>
+</ul>
+<blockquote>
+<ul>
+<li>NtSetInformationThread()<ul>
+<li>ThreadHideFormDebugger(0x11)</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<ul>
+<li>打开进程检查</li>
+</ul>
+<blockquote>
+<ul>
+<li>SeDebugPrivilege：检查进程是否具有调试权限</li>
+</ul>
+</blockquote>
+</li>
+</ol>
+<h4 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h4><ul>
+<li>SHE反调试</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SEH_AntiDebug_Native.cpp : 定义控制台应用程序的入口点。</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"stdafx.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> <span class="meta-keyword">warning</span>(disable: 4733) <span class="comment">// 忽略“内联 asm 分配到FS:0”错误</span></span></span><br><span class="line"><span class="keyword">void</span> (*g_funExceptionReturn)() = <span class="literal">nullptr</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">RightFun</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    MessageBox(<span class="number">0</span>,<span class="string">L"正常运行！"</span>,<span class="string">L"SEH反调试测试"</span>,MB_OK);</span><br><span class="line">    <span class="comment">// 删除异常处理器</span></span><br><span class="line">    <span class="comment">//     运行至此处时栈顶的信息是EXCEPTION_REGISTRATION_RECORD，里面</span></span><br><span class="line">    <span class="comment">// 保存着其最初运行的已成处理器，我们将其保存到FS:[0]处后就相当于</span></span><br><span class="line">    <span class="comment">// 摘除了前面注册的SEH异常链信息。</span></span><br><span class="line">    __asm pop dword ptr fs:[<span class="number">0</span>];</span><br><span class="line">    g_funExceptionReturn();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">WrongFun</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    MessageBox(<span class="number">0</span>,<span class="string">L"检测到调试器！"</span>,<span class="string">L"SEH反调试测试"</span>,MB_OK);</span><br><span class="line">    <span class="comment">// 删除异常处理器</span></span><br><span class="line">    <span class="comment">//     运行至此处时栈顶的信息是EXCEPTION_REGISTRATION_RECORD，里面</span></span><br><span class="line">    <span class="comment">// 保存着其最初运行的已成处理器，我们将其保存到FS:[0]处后就相当于</span></span><br><span class="line">    <span class="comment">// 摘除了前面注册的SEH异常链信息。</span></span><br><span class="line">    __asm pop dword ptr fs:[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function">EXCEPTION_DISPOSITION <span class="title">ExpHandel_A</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    EXCEPTION_RECORD              *pExceptionRecord,   <span class="comment">// 异常状态描述</span></span></span></span><br><span class="line"><span class="function"><span class="params">    EXCEPTION_REGISTRATION_RECORD *pEstablisherFrame,  <span class="comment">// 异常注册框架</span></span></span></span><br><span class="line"><span class="function"><span class="params">    CONTEXT                       *pContextRecord,     <span class="comment">// 返回线程上下文</span></span></span></span><br><span class="line"><span class="function"><span class="params">    PVOID                         pDispatcherContext )</span> <span class="comment">// 分发器上下文（系统使用，无需关注）</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 1. 获取调试标志位</span></span><br><span class="line">    BYTE IsBeginDebug = <span class="literal">false</span>; </span><br><span class="line">    __asm &#123;</span><br><span class="line">        push eax;</span><br><span class="line">        mov eax, dword ptr fs:[<span class="number">0x30</span>]; <span class="comment">// 获取PEB</span></span><br><span class="line">        mov al,byte ptr ds:[eax+<span class="number">2</span>]; <span class="comment">// 获取PEB.BeginDebug</span></span><br><span class="line">        mov IsBeginDebug,al;</span><br><span class="line">        pop eax;</span><br><span class="line">    &#125;;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 2. 备份正确的异常返回地址</span></span><br><span class="line">    g_funExceptionReturn = (<span class="keyword">void</span> (*)())pContextRecord-&gt;Eip;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3. 根据标志位执行不同的SEH异常处理流程</span></span><br><span class="line">    <span class="keyword">if</span> ( IsBeginDebug )</span><br><span class="line">        pContextRecord-&gt;Eip = (DWORD)WrongFun;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        pContextRecord-&gt;Eip = (DWORD)RightFun;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4. 返回“已经正常处理”</span></span><br><span class="line">    <span class="keyword">return</span> ExceptionContinueExecution;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function">EXCEPTION_DISPOSITION <span class="title">ExpHandel_B</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    EXCEPTION_RECORD              *pExceptionRecord,   <span class="comment">// 异常状态描述</span></span></span></span><br><span class="line"><span class="function"><span class="params">    EXCEPTION_REGISTRATION_RECORD *pEstablisherFrame,  <span class="comment">// 异常注册框架</span></span></span></span><br><span class="line"><span class="function"><span class="params">    CONTEXT                       *pContextRecord,     <span class="comment">// 返回线程上下文</span></span></span></span><br><span class="line"><span class="function"><span class="params">    PVOID                         pDispatcherContext )</span> <span class="comment">// 分发器上下文（系统使用，无需关注）</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 返回“运行下一个异常处理器”</span></span><br><span class="line">    <span class="keyword">return</span> ExceptionContinueSearch;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> _tmain(<span class="keyword">int</span> argc, _TCHAR* argv[])</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 1. 添加SEH异常链</span></span><br><span class="line">    <span class="comment">// 以下异常链添加完成后为：</span></span><br><span class="line">    <span class="comment">// [Start]                                                                  [End]</span></span><br><span class="line">    <span class="comment">// *-------------*    *-------------*    *------------*            *------------* </span></span><br><span class="line">    <span class="comment">// | Next -------+--&gt; | Next -------+--&gt; | Next ------+--&gt; ... --&gt; | 0xFFFFFFFF |</span></span><br><span class="line">    <span class="comment">// | ExpHandel_B |    | ExpHandel_A |    | ?????????? |            | ?????????? |    </span></span><br><span class="line">    <span class="comment">// *-------------*    *-------------*    *------------*            *------------*    </span></span><br><span class="line">	__asm&#123; <span class="comment">/* 添加SEH异常链A */</span> </span><br><span class="line">        push ExpHandel_A;</span><br><span class="line">        push dword ptr fs:[<span class="number">0</span>];</span><br><span class="line">        mov dword ptr fs:[<span class="number">0</span>],esp;</span><br><span class="line">    &#125;;</span><br><span class="line">    __asm&#123; <span class="comment">/* 添加SEH异常链B */</span>   </span><br><span class="line">        push ExpHandel_B;</span><br><span class="line">        push dword ptr fs:[<span class="number">0</span>];</span><br><span class="line">        mov dword ptr fs:[<span class="number">0</span>],esp;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 人为制造异常</span></span><br><span class="line">    <span class="keyword">int</span> *pTest = <span class="literal">nullptr</span>;</span><br><span class="line">    *pTest = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">梁言</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://yoursite.com/2018/06/21/调试与异常 （二）/">http://yoursite.com/2018/06/21/调试与异常 （二）/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="next-post pull-right"><a href="/2018/06/21/调试与异常 （一）/"><span>调试与异常 （一）</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer><div class="layout" id="footer"><div class="copyright">&copy;2013 - 2018 By 梁言</div><div class="framework-info"><span>Driven - </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="/js/third-party/anime.min.js"></script><script src="/js/third-party/jquery.min.js"></script><script src="/js/third-party/jquery.fancybox.min.js"></script><script src="/js/third-party/velocity.min.js"></script><script src="/js/third-party/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.5.5"></script><script src="/js/fancybox.js?version=1.5.5"></script><script src="/js/sidebar.js?version=1.5.5"></script><script src="/js/copy.js?version=1.5.5"></script><script src="/js/fireworks.js?version=1.5.5"></script><script src="/js/transition.js?version=1.5.5"></script><script src="/js/scroll.js?version=1.5.5"></script><script src="/js/head.js?version=1.5.5"></script></body></html>
