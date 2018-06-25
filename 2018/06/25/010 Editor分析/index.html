@@ -35,6 +35,37 @@
 </blockquote>
 <p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-6-25/22668034.jpg" alt=""></p>
 <blockquote>
-<p>回到关键跳转00DD5926处，判断密码为正确的条件为EDI = 0xDB，而EDI的值是EAX给的，而EAX为函数010Edito.00409C9B的返回值，这个函数应该验证Key的关键函数，接下来进入函数分析。</p>
+<p>回到关键跳转00DD5926处，判断密码为正确的条件为EDI = 0xDB，而EDI的值是EAX给的，而EAX为函数010Edito.00409C9B的返回值，这个函数可能为验证Key的关键函数，而我们动态调试发现有跳转直接跳转到cmp edi,0xdb。</p>
 </blockquote>
-<h3 id="第二步-分析关键函数"><a href="#第二步-分析关键函数" class="headerlink" title="第二步 分析关键函数"></a>第二步 分析关键函数</h3></div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">梁言</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://yoursite.com/2018/06/25/010 Editor分析/">http://yoursite.com/2018/06/25/010 Editor分析/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/逆向工程/">逆向工程</a></div><nav id="pagination"><div class="next-post pull-right"><a href="/2018/06/21/Android游戏分析/"><span>Android游戏分析</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer><div class="layout" id="footer"><div class="copyright">&copy;2013 - 2018 By 梁言</div><div class="framework-info"><span>Driven - </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="/js/third-party/anime.min.js"></script><script src="/js/third-party/jquery.min.js"></script><script src="/js/third-party/jquery.fancybox.min.js"></script><script src="/js/third-party/velocity.min.js"></script><script src="/js/third-party/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.5.5"></script><script src="/js/fancybox.js?version=1.5.5"></script><script src="/js/sidebar.js?version=1.5.5"></script><script src="/js/copy.js?version=1.5.5"></script><script src="/js/fireworks.js?version=1.5.5"></script><script src="/js/transition.js?version=1.5.5"></script><script src="/js/scroll.js?version=1.5.5"></script><script src="/js/head.js?version=1.5.5"></script></body></html>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-6-25/93217778.jpg" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-6-25/18045030.jpg" alt=""></p>
+<blockquote>
+<p>同样为函数010Edito.00409C9B，现在可以认为这是关键函数，此时EDI的值为0x177，为了验证此跳转为关键跳转，我们把EDI的值修改为0xDB。</p>
+</blockquote>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-6-25/13306046.jpg" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-6-25/90664364.jpg" alt=""></p>
+<blockquote>
+<p>之后F9运行</p>
+</blockquote>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-6-25/56983231.jpg" alt=""></p>
+<blockquote>
+<p>验证成功！接下来我们进入函数分析。</p>
+</blockquote>
+<h3 id="第二步-分析关键函数"><a href="#第二步-分析关键函数" class="headerlink" title="第二步 分析关键函数"></a>第二步 分析关键函数</h3><blockquote>
+<p>函数010Edito.00409C9B，参数情况为：</p>
+<p>arg1 = 0x9 ；</p>
+<p>arg2 = 0x4389；</p>
+</blockquote>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-6-25/43180291.jpg" alt=""></p>
+<blockquote>
+<p>从下往上看，找到需要的0xDB，而跳转条件是eax = 0x2D， 为函数010Edito.0040A826的返回值。</p>
+</blockquote>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-6-25/16623615.jpg" alt=""></p>
+<blockquote>
+<p>进入函数，此时ECX存的地址为key，再次进入函数。</p>
+</blockquote>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-6-25/2645143.jpg" alt=""></p>
+<blockquote>
+<p>函数将注册码按每两位16进制数的形式存入局部变量数组中 </p>
+</blockquote>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">梁言</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://yoursite.com/2018/06/25/010 Editor分析/">http://yoursite.com/2018/06/25/010 Editor分析/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/逆向工程/">逆向工程</a></div><nav id="pagination"><div class="next-post pull-right"><a href="/2018/06/21/验证异常处理调用顺序/"><span>验证异常处理调用顺序</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer><div class="layout" id="footer"><div class="copyright">&copy;2013 - 2018 By 梁言</div><div class="framework-info"><span>Driven - </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="/js/third-party/anime.min.js"></script><script src="/js/third-party/jquery.min.js"></script><script src="/js/third-party/jquery.fancybox.min.js"></script><script src="/js/third-party/velocity.min.js"></script><script src="/js/third-party/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.5.5"></script><script src="/js/fancybox.js?version=1.5.5"></script><script src="/js/sidebar.js?version=1.5.5"></script><script src="/js/copy.js?version=1.5.5"></script><script src="/js/fireworks.js?version=1.5.5"></script><script src="/js/transition.js?version=1.5.5"></script><script src="/js/scroll.js?version=1.5.5"></script><script src="/js/head.js?version=1.5.5"></script></body></html>
