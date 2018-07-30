@@ -7,7 +7,7 @@
     noSupport: '浏览器不支持'
   },
   localSearch: undefined
-} </script></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar"><div class="toggle-sidebar-info text-center"><span data-toggle="切换文章详情">切换站点概览</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#分析ICMP协议数据包"><span class="toc-number">1.</span> <span class="toc-text">分析ICMP协议数据包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DHCP数据包分析"><span class="toc-number">2.</span> <span class="toc-text">DHCP数据包分析</span></a></li></ol></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="/img/avatar.png"></div><div class="author-info__name text-center">yusakul</div><div class="author-info__description text-center"></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">文章</span><span class="pull-right">10</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">标签</span><span class="pull-right">6</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">分类</span><span class="pull-right">2</span></a></div></div></div><div id="content-outer"><div class="no-bg" id="top-container" style="background-image: url(true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">梁言</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus"><a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span></div><div id="post-info"><div id="post-title">Wireshark抓取数据包</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-07-28</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/网络协议/">网络协议</a></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><h4 id="分析ICMP协议数据包"><a href="#分析ICMP协议数据包" class="headerlink" title="分析ICMP协议数据包"></a><strong>分析ICMP协议数据包</strong></h4><p>实验原理</p>
+} </script></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar"><div class="toggle-sidebar-info text-center"><span data-toggle="切换文章详情">切换站点概览</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#分析ICMP协议数据包"><span class="toc-number">1.</span> <span class="toc-text">分析ICMP协议数据包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DHCP数据包分析"><span class="toc-number">2.</span> <span class="toc-text">DHCP数据包分析</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#使用DHCP获取IP地址："><span class="toc-number">2.1.</span> <span class="toc-text">使用DHCP获取IP地址：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#分析"><span class="toc-number">2.2.</span> <span class="toc-text">分析</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#Offer（提供）"><span class="toc-number">2.2.1.</span> <span class="toc-text">Offer（提供）</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Request（请求）"><span class="toc-number">2.2.2.</span> <span class="toc-text">Request（请求）</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#确认回复"><span class="toc-number">2.3.</span> <span class="toc-text">确认回复</span></a></li></ol></li></ol></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="/img/avatar.png"></div><div class="author-info__name text-center">yusakul</div><div class="author-info__description text-center"></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">文章</span><span class="pull-right">10</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">标签</span><span class="pull-right">6</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">分类</span><span class="pull-right">2</span></a></div></div></div><div id="content-outer"><div class="no-bg" id="top-container" style="background-image: url(true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">梁言</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus"><a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span></div><div id="post-info"><div id="post-title">Wireshark抓取数据包</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-07-28</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/网络协议/">网络协议</a></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><h4 id="分析ICMP协议数据包"><a href="#分析ICMP协议数据包" class="headerlink" title="分析ICMP协议数据包"></a><strong>分析ICMP协议数据包</strong></h4><p>实验原理</p>
 <blockquote>
 <p>ping是用来测试网络连通性的命令，一旦发出ping命令，主机会发出连续的测试数据包到网络中，在通常的情况下，主机会收到回应数据包，ping采用的是ICMP协议。</p>
 </blockquote>
@@ -31,8 +31,7 @@
 <p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-28/22058038.jpg" alt=""></p>
 <p>这两个报文的type不一样，8代表请求，0代表应答；code都为0，表示为回显应答；标示符和序列号都是一样的，表示这两个报文是配对的 。</p>
 </blockquote>
-<h4 id="DHCP数据包分析"><a href="#DHCP数据包分析" class="headerlink" title="DHCP数据包分析"></a>DHCP数据包分析</h4><p>使用DHCP获取IP地址： </p>
-<ul>
+<h4 id="DHCP数据包分析"><a href="#DHCP数据包分析" class="headerlink" title="DHCP数据包分析"></a>DHCP数据包分析</h4><h5 id="使用DHCP获取IP地址："><a href="#使用DHCP获取IP地址：" class="headerlink" title="使用DHCP获取IP地址："></a>使用DHCP获取IP地址：</h5><ul>
 <li>（1）打开命令窗口,启动Wireshark。 </li>
 <li>（2）输入“ipconfig  /release”。这条命令会释放主机目前的IP地址，此时，主机IP地址会变为0.0.0.0 </li>
 </ul>
@@ -62,10 +61,7 @@
 <blockquote>
 <p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-29/9678239.jpg" alt=""></p>
 </blockquote>
-<ul>
-<li>分析</li>
-</ul>
-<blockquote>
+<h5 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h5><blockquote>
 <p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-29/39995478.jpg" alt=""></p>
 <ul>
 <li><p>由截图可知，本机发起DHCP Discover包，用来寻找DHCP服务器，源ip是0.0.0.0，因为刚开始还不知道，目的地址是255.255.255.255的广播地址，广播到整个网段。 </p>
@@ -76,6 +72,42 @@
 <li>这是UDP上的DHCP，本机发起的端口是68，目标端口是67。</li>
 </ul>
 </li>
+</ul>
+</blockquote>
+<h6 id="Offer（提供）"><a href="#Offer（提供）" class="headerlink" title="Offer（提供）"></a>Offer（提供）</h6><blockquote>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-30/85135304.jpg" alt=""></p>
+<ul>
+<li>DHCP服务器收到客户端发的DHCP Discover之后，会在自己的地址池中拿出一个没有分配的地址以及配套的参数（如：掩码、DNS、网关、域名、租期……），然后以一个DHCP Offer包发送出去。</li>
+<li>此时源IP是DHCP服务器的IP，目的IP是255.255.255.255的广播。这时候本机还无法获得IP，所以DHCP服务器只能用广播来回应。</li>
+<li>Message type为2表明是回复包。 </li>
+<li>给客户端的IP地址：192.168.42.86，但是现在还没有确认。 </li>
+<li>中断地址（网关）：Relay agent IP address：0.0.0.0</li>
+</ul>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-30/72712021.jpg" alt=""></p>
+<ul>
+<li>此截图表明通过UDP传输，客户端端口号68，服务器是67。 </li>
+</ul>
+<p>DHCP服务器地址 ：</p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-30/95350393.jpg" alt=""></p>
+</blockquote>
+<h6 id="Request（请求）"><a href="#Request（请求）" class="headerlink" title="Request（请求）"></a>Request（请求）</h6><blockquote>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-30/28366387.jpg" alt=""></p>
+<ul>
+<li>客户端收到这个DHCP Offer后，会再发出一个DHCP Request给服务器来申请这个Offer中包含的地址。这个时候，客户端还没有正式拿到地址，所以还需要向DHCP服务器申请。</li>
+</ul>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-30/11842645.jpg" alt=""></p>
+<ul>
+<li>此时客户端的源IP还是0.0.0.0，目的IP还是255.255.255.255。</li>
+</ul>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-30/37101733.jpg" alt=""></p>
+<ul>
+<li>将这些都广播出去，告诉其他DHCP服务器和分配给本机的服务器。 </li>
+</ul>
+</blockquote>
+<h5 id="确认回复"><a href="#确认回复" class="headerlink" title="确认回复"></a>确认回复</h5><blockquote>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-30/81733864.jpg" alt=""></p>
+<ul>
+<li>被客户机选择的DHCP服务器在收到DHCPREQUEST广播后，会广播返回给客户机一个DHCPACK消息包，表明已经接受客户机的选择，并将这一IP地址的合法租用以及其他的配置信息都放入该广播包发给客户机。 </li>
 </ul>
 </blockquote>
 </li>
