@@ -15,11 +15,11 @@
 <h4 id="扫雷游戏插件的目标"><a href="#扫雷游戏插件的目标" class="headerlink" title="扫雷游戏插件的目标"></a>扫雷游戏插件的目标</h4><ol>
 <li>当鼠标放在扫雷的方格中时，会显示是否有雷。</li>
 </ol>
-<p><img src="/2018/07/30/扫雷插件分析与编写/35c44f15ccdf5c9c4d952552713dc68a.jpg" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-30/938414.jpg" alt=""></p>
 <ol start="2">
 <li>一键扫雷，快捷键是F5</li>
 </ol>
-<p><img src="/2018/07/30/扫雷插件分析与编写/b99e4e82ad77553dd3bf52ca30079585.jpg" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-30/33503179.jpg" alt=""></p>
 <h4 id="扫雷游戏的分析"><a href="#扫雷游戏的分析" class="headerlink" title="扫雷游戏的分析"></a>扫雷游戏的分析</h4><ol>
 <li>需要的技能</li>
 </ol>
@@ -58,19 +58,18 @@
 </blockquote>
 <p>根据宽度或者高的值变化，使用 CE 在内存中搜索数值，从而能找到宽度的地址</p>
 <h5 id="CE使用"><a href="#CE使用" class="headerlink" title="CE使用"></a>CE使用</h5><ol>
-<li>修改程序数据的值，在CE中搜索</li>
+<li><p>修改程序数据的值，在CE中搜索</p>
+<p> <img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-30/70723163.jpg" alt=""></p>
+</li>
+<li><p>每次修改之后，再使用CE搜索，最后确定可能的值<img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-30/56597310.jpg" alt=""></p>
+</li>
 </ol>
-<p><img src="/2018/07/30/扫雷插件分析与编写/aca671c0023bdf4418d462dd097e7434.jpg" alt=""></p>
-<ol start="2">
-<li>每次修改之后，再使用CE搜索，最后确定可能的值</li>
-</ol>
-<p><img src="/2018/07/30/扫雷插件分析与编写/f8e11148b1f51be352543d1240b3f76e.jpg" alt=""></p>
 <p>注意：绿色的地址就是可以映射到文件偏移的地址，绿色地址称为基址</p>
-<p><img src="/2018/07/30/扫雷插件分析与编写/2ce41dba589c474ce8156ec94cdf1ebf.jpg" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-30/46019929.jpg" alt=""></p>
 <ol start="3">
 <li>在可能的值上查找此地址数据的代码</li>
 </ol>
-<p><img src="/2018/07/30/扫雷插件分析与编写/aa657e0f169845f3a1ff27877490fa85.jpg" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-30/21301896.jpg" alt=""></p>
 <p>再次修改数据，会有代码被记录</p>
 <p><img src="/2018/07/30/扫雷插件分析与编写/49048be67517596bf23372f89a96bad2.jpg" alt=""></p>
 <p>代码处：10036AC</p>
