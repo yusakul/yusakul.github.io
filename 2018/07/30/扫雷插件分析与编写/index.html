@@ -1,0 +1,170 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content=""><meta name="keywords" content=""><meta name="author" content="yusakul,undefined"><meta name="copyright" content="yusakul"><title>梁言</title><link rel="shortcut icon" href="/favicon.ico"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css?version=1.5.5"><link rel="dns-prefetch" href="https://cdn.staticfile.org"><link rel="dns-prefetch" href="https://cdn.bootcss.com"><link rel="dns-prefetch" href="https://creativecommons.org"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  localSearch: undefined
+} </script></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar"><div class="toggle-sidebar-info text-center"><span data-toggle="切换文章详情">切换站点概览</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#扫雷游戏插件的目标"><span class="toc-number">1.</span> <span class="toc-text">扫雷游戏插件的目标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#扫雷游戏的分析"><span class="toc-number">2.</span> <span class="toc-text">扫雷游戏的分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#扫雷游戏-分析数据"><span class="toc-number">3.</span> <span class="toc-text">扫雷游戏-分析数据</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#CE使用"><span class="toc-number">3.1.</span> <span class="toc-text">CE使用</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#扫雷游戏-分析代码"><span class="toc-number">4.</span> <span class="toc-text">扫雷游戏-分析代码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#分析1-从数值变化的代码处开始分析"><span class="toc-number">5.</span> <span class="toc-text">分析1-从数值变化的代码处开始分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#搭建代码框架"><span class="toc-number">6.</span> <span class="toc-text">搭建代码框架</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#分析-屏幕坐标转数组下标"><span class="toc-number">7.</span> <span class="toc-text">分析 -屏幕坐标转数组下标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#分析-数组下标转屏幕坐标"><span class="toc-number">8.</span> <span class="toc-text">分析-数组下标转屏幕坐标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DLL调试"><span class="toc-number">9.</span> <span class="toc-text">DLL调试</span></a></li></ol></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="/img/avatar.png"></div><div class="author-info__name text-center">yusakul</div><div class="author-info__description text-center"></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">文章</span><span class="pull-right">12</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">标签</span><span class="pull-right">7</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">分类</span><span class="pull-right">3</span></a></div></div></div><div id="content-outer"><div class="no-bg" id="top-container" style="background-image: url(true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">梁言</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus"><a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span></div><div id="post-info"><div id="post-title">无题</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-07-30</time></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><p>title: 扫雷辅助插件</p>
+<p>date: 2018-05-28 14:11:37</p>
+<p>tag: 扫雷分析</p>
+<p>category: 逆向工程</p>
+<hr>
+<h4 id="扫雷游戏插件的目标"><a href="#扫雷游戏插件的目标" class="headerlink" title="扫雷游戏插件的目标"></a>扫雷游戏插件的目标</h4><ol>
+<li>当鼠标放在扫雷的方格中时，会显示是否有雷。</li>
+</ol>
+<p><img src="/2018/07/30/扫雷插件分析与编写/35c44f15ccdf5c9c4d952552713dc68a.jpg" alt=""></p>
+<ol start="2">
+<li>一键扫雷，快捷键是F5</li>
+</ol>
+<p><img src="/2018/07/30/扫雷插件分析与编写/b99e4e82ad77553dd3bf52ca30079585.jpg" alt=""></p>
+<h4 id="扫雷游戏的分析"><a href="#扫雷游戏的分析" class="headerlink" title="扫雷游戏的分析"></a>扫雷游戏的分析</h4><ol>
+<li>需要的技能</li>
+</ol>
+<blockquote>
+<p>  ① 会编写DLL</p>
+<p>  ②会写注入读取或者写内存的代码</p>
+<p>  ③能够分析出扫雷程序中的信息</p>
+</blockquote>
+<ol start="2">
+<li>需要分析的数据 </li>
+</ol>
+<blockquote>
+<p>① 扫雷数组的大小</p>
+<p>② 扫雷数组的宽度 、高度</p>
+<p>③ 扫雷数组中的数量</p>
+</blockquote>
+<ol start="3">
+<li>需要分析的代码</li>
+</ol>
+<blockquote>
+<p>  ① 找到遍历扫雷数组的代码，或者分析出如何遍历数组</p>
+<p>  ② 找到屏幕坐标转换数组下的代码，或者分析出这个过程</p>
+<p>  ③ 找到数组下标转换屏幕坐的代码，或者分析出这个过程</p>
+</blockquote>
+<ol start="4">
+<li>代码框架</li>
+</ol>
+<blockquote>
+<p>接管扫雷窗口的回调函数，处理F5的按键消息</p>
+<p>修改窗口属性SetWindowLong</p>
+</blockquote>
+<h4 id="扫雷游戏-分析数据"><a href="#扫雷游戏-分析数据" class="headerlink" title="扫雷游戏-分析数据"></a>扫雷游戏-分析数据</h4><blockquote>
+<p>① 扫雷数组的大小</p>
+<p>② 扫雷数组的宽度 、高度</p>
+<p>③ 扫雷数组中的数量</p>
+</blockquote>
+<p>根据宽度或者高的值变化，使用 CE 在内存中搜索数值，从而能找到宽度的地址</p>
+<h5 id="CE使用"><a href="#CE使用" class="headerlink" title="CE使用"></a>CE使用</h5><ol>
+<li>修改程序数据的值，在CE中搜索</li>
+</ol>
+<p><img src="/2018/07/30/扫雷插件分析与编写/aca671c0023bdf4418d462dd097e7434.jpg" alt=""></p>
+<ol start="2">
+<li>每次修改之后，再使用CE搜索，最后确定可能的值</li>
+</ol>
+<p><img src="/2018/07/30/扫雷插件分析与编写/f8e11148b1f51be352543d1240b3f76e.jpg" alt=""></p>
+<p>注意：绿色的地址就是可以映射到文件偏移的地址，绿色地址称为基址</p>
+<p><img src="/2018/07/30/扫雷插件分析与编写/2ce41dba589c474ce8156ec94cdf1ebf.jpg" alt=""></p>
+<ol start="3">
+<li>在可能的值上查找此地址数据的代码</li>
+</ol>
+<p><img src="/2018/07/30/扫雷插件分析与编写/aa657e0f169845f3a1ff27877490fa85.jpg" alt=""></p>
+<p>再次修改数据，会有代码被记录</p>
+<p><img src="/2018/07/30/扫雷插件分析与编写/49048be67517596bf23372f89a96bad2.jpg" alt=""></p>
+<p>代码处：10036AC</p>
+<p>高度：1005338</p>
+<p>宽度：1005334</p>
+<p>雷数：1005330</p>
+<h4 id="扫雷游戏-分析代码"><a href="#扫雷游戏-分析代码" class="headerlink" title="扫雷游戏-分析代码"></a>扫雷游戏-分析代码</h4><ol>
+<li>从数值变化的代码处开始分析</li>
+</ol>
+<blockquote>
+<p>  从代码处： 10036 AC 开始跟踪分析</p>
+</blockquote>
+<ol start="2">
+<li>敏感 API 下断点，再进一步分析 下断点，再进一步分析</li>
+</ol>
+<blockquote>
+<p>  定时器创建和销毁： SetTimer，KillTimer</p>
+</blockquote>
+<blockquote>
+<p>  随机函数： rand</p>
+</blockquote>
+<ol start="3">
+<li>从窗口回调函数开始分析 窗口回调函数开始分析 ，分析鼠标按下消息</li>
+</ol>
+<p>使用 spy++ 查找程序的窗口回调</p>
+<p><img src="/2018/07/30/扫雷插件分析与编写/976126597b584c1d6e3d37875773bcb5.jpg" alt=""></p>
+<p>地址：1001BC9</p>
+<h4 id="分析1-从数值变化的代码处开始分析"><a href="#分析1-从数值变化的代码处开始分析" class="headerlink" title="分析1-从数值变化的代码处开始分析"></a>分析1-从数值变化的代码处开始分析</h4><p>从代码处：10036AC开始跟踪分析</p>
+<p><img src="/2018/07/30/扫雷插件分析与编写/14247bbd3b5db04cf18cd790fb5c12dd.jpg" alt=""></p>
+<p>修改完数据之后，应该初始化扫雷数组、随机生成雷。</p>
+<p><img src="/2018/07/30/扫雷插件分析与编写/ed79b6f2b6fd70bdb035995faa30ae19.jpg" alt=""></p>
+<p>随机生成雷的代码中，是一个循环随机生成雷的x,y 坐标，然后写入到对应缓冲区</p>
+<p><img src="/2018/07/30/扫雷插件分析与编写/df7d476c100622f650314beb54cd575d.jpg" alt=""></p>
+<p>基地址：0x1005340</p>
+<p>X坐标计算：随机数+1</p>
+<p>Y坐标计算：(随机数+1)*32</p>
+<p>根据内存情况可以分析出一些标记：</p>
+<p>0F ：初始化的值</p>
+<p>8F ：雷的标记</p>
+<p>4X ：周围有几颗雷就是4X, 41，42，43，44……</p>
+<p>10 ：边界</p>
+<p>有了随机雷的生成，那么在雷生成前面的CALL，应该就是初始化雷区数组的代码，经过调试查看内存，发现真的是。</p>
+<p><img src="/2018/07/30/扫雷插件分析与编写/194aea03198d377f61fa9c969b469304.jpg" alt=""></p>
+<p>分析初始化雷区数组代码，发现为三步</p>
+<ol>
+<li><p>初始化全部缓冲区为 0x0 F</p>
+</li>
+<li><p>初始化行标记 为 0x10</p>
+</li>
+<li><p>初始化列标记 位 0x 10</p>
+</li>
+</ol>
+<p><img src="/2018/07/30/扫雷插件分析与编写/d50e347024ad8c09949e92ddb0d1bd18.jpg" alt=""></p>
+<h4 id="搭建代码框架"><a href="#搭建代码框架" class="headerlink" title="搭建代码框架"></a>搭建代码框架</h4><p>第一步 ，定义一些值和函数</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">WNDPROC g_OldProc = <span class="literal">NULL</span>;</span><br><span class="line">HWND g_hWnd = <span class="literal">NULL</span>;</span><br><span class="line"><span class="function">LRESULT WINAPI <span class="title">WindowProc</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">_In_ HWND hWnd,</span></span></span><br><span class="line"><span class="function"><span class="params">_In_ UINT Msg,</span></span></span><br><span class="line"><span class="function"><span class="params">_In_ WPARAM wParam,</span></span></span><br><span class="line"><span class="function"><span class="params">_In_ LPARAM lParam)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (Msg == WM_KEYDOWN &amp;&amp; wParam == VK_F5)</span><br><span class="line">	&#123;</span><br><span class="line">		CString strString;</span><br><span class="line">		strString.Format(<span class="string">L"wParam = %p"</span>, wParam);</span><br><span class="line">		OutputDebugString(strString.GetBuffer());</span><br><span class="line">		<span class="keyword">return</span> DefWindowProc(hWnd, Msg, wParam, lParam);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> CallWindowProc(g_OldProc, hWnd, Msg, wParam, lParam);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第二步，修改回调函数</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 修改扫雷窗口的回调函数</span></span><br><span class="line"><span class="comment">// 1. 找到扫雷窗口</span></span><br><span class="line">g_hWnd = FindWindow(<span class="literal">NULL</span>, <span class="string">L"扫雷"</span>);</span><br><span class="line"><span class="comment">// 2. 修改窗口回调</span></span><br><span class="line">g_OldProc = (WNDPROC)SetWindowLong(g_hWnd, GWL_WNDPROC, (LONG)WindowProc);</span><br><span class="line"><span class="comment">// 恢复窗口回调</span></span><br><span class="line">SetWindowLong(g_hWnd, GWL_WNDPROC, (LONG)g_OldProc);</span><br></pre></td></tr></table></figure>
+<p>注意：写代码要记得释放和恢复，写代码要做好debug的准备</p>
+<p>经过调整编写之后，遍历扫雷的数组</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 基地址：0x1005340</span></span><br><span class="line"><span class="comment">// 高度：1005338</span></span><br><span class="line"><span class="comment">// 宽度：1005334</span></span><br><span class="line"><span class="comment">// 雷数：1005330</span></span><br><span class="line">byte** g_MineArray = (byte**)<span class="number">0x1005340</span>;</span><br><span class="line"><span class="keyword">int</span>* g_nHeight = (<span class="keyword">int</span>*)<span class="number">0x1005338</span>;</span><br><span class="line"><span class="keyword">int</span>* g_nWidth = (<span class="keyword">int</span>*)<span class="number">0x1005334</span>;</span><br><span class="line"><span class="keyword">int</span>* g_nMineCount = (<span class="keyword">int</span>*)<span class="number">0x1005330</span>;</span><br><span class="line"></span><br><span class="line"><span class="function">LRESULT WINAPI <span class="title">WindowProc</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">_In_ HWND hWnd,</span></span></span><br><span class="line"><span class="function"><span class="params">_In_ UINT Msg,</span></span></span><br><span class="line"><span class="function"><span class="params">_In_ WPARAM wParam,</span></span></span><br><span class="line"><span class="function"><span class="params">_In_ LPARAM lParam)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (Msg == WM_KEYDOWN &amp;&amp; wParam == VK_F5)</span><br><span class="line">	&#123;</span><br><span class="line">	CString strString;</span><br><span class="line">	strString.Format(<span class="string">L"saolei wParam = %p"</span>, wParam);</span><br><span class="line">	OutputDebugString(strString.GetBuffer());</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 遍历扫雷数组</span></span><br><span class="line">	<span class="keyword">int</span> nHeight = *g_nHeight; <span class="comment">// 高度y</span></span><br><span class="line">    <span class="keyword">int</span> nWidth = *g_nWidth; <span class="comment">// 宽度x</span></span><br><span class="line">    <span class="keyword">int</span> nCount = *g_nMineCount;</span><br><span class="line">    <span class="keyword">int</span> nCurrentCount = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt; nHeight+<span class="number">1</span>; j++)</span><br><span class="line">    &#123;</span><br><span class="line">        CString strString1;</span><br><span class="line">        strString1.Format(<span class="string">L"saolei 行：%d "</span>, j);</span><br><span class="line">        <span class="comment">// 行遍历时，需要注意去掉边界</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; nWidth + <span class="number">2</span> - <span class="number">1</span>; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            byte byCode = *(byte*)((<span class="keyword">int</span>)g_MineArray+i+j*<span class="number">32</span>);</span><br><span class="line">            <span class="keyword">if</span> (byCode == (byte)<span class="number">0x8F</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                nCurrentCount += <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            CString strCode;</span><br><span class="line">            strCode.Format(<span class="string">L" %02x "</span>, byCode);</span><br><span class="line">            strString1 += strCode;</span><br><span class="line">        &#125;</span><br><span class="line">        strString1 += <span class="string">L"\r\n"</span>;</span><br><span class="line">        OutputDebugString(strString1.GetBuffer());</span><br><span class="line">    &#125;</span><br><span class="line">        CString strString2;</span><br><span class="line">        strString2.Format(<span class="string">L"saolei 雷数 = %d"</span>, nCurrentCount);</span><br><span class="line">        OutputDebugString(strString2.GetBuffer());</span><br><span class="line">        <span class="keyword">return</span> DefWindowProc(hWnd, Msg, wParam, lParam);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> CallWindowProc(g_OldProc, hWnd, Msg, wParam, lParam);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="分析-屏幕坐标转数组下标"><a href="#分析-屏幕坐标转数组下标" class="headerlink" title="分析 -屏幕坐标转数组下标"></a>分析 -屏幕坐标转数组下标</h4><p>分析思路：</p>
+<blockquote>
+<p>① 窗口回调下消息断点，分析鼠标按下弹起消息的流程</p>
+<p>② 静态分析窗口回调，使用IDA找到对应的消息处理流程</p>
+</blockquote>
+<p>窗口回调地址：1001BC9</p>
+<p>在地址处下消息断点WM_LBUTTONDOWN</p>
+<p>在这个消息的lParam参数里是x,y坐标</p>
+<p><img src="/2018/07/30/扫雷插件分析与编写/834f33d46ccbc5e6e9d7d9fa68ad1cb8.jpg" alt=""></p>
+<p>将汇编代码翻译为C代码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">WORD y = HIWORD(lParam);</span><br><span class="line">y = (y - <span class="number">0x27</span>) &gt;&gt; <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line">WORD x = LOWORD(lParam);</span><br><span class="line">x = (x + <span class="number">4</span>) &gt;&gt; <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line">byte byCode = *(byte*)((<span class="keyword">int</span>)g_MineArray + x + y * <span class="number">32</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (byCode == (byte)<span class="number">0x8F</span>)</span><br><span class="line">&#123;</span><br><span class="line">	SetWindowText(hWnd,<span class="string">L"扫雷 - 友情提示：你踩到雷了！"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">	SetWindowText(hWnd, <span class="string">L"扫雷"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="分析-数组下标转屏幕坐标"><a href="#分析-数组下标转屏幕坐标" class="headerlink" title="分析-数组下标转屏幕坐标"></a>分析-数组下标转屏幕坐标</h4><p>将上面的代码反转</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 发送一个鼠标按下弹起的消息</span></span><br><span class="line">WORD y = j;</span><br><span class="line">y = (y &lt;&lt; <span class="number">4</span>) + <span class="number">0x27</span>; <span class="comment">//y 高16位</span></span><br><span class="line"></span><br><span class="line">WORD x = i;</span><br><span class="line">x = (x &lt;&lt; <span class="number">4</span>) - <span class="number">4</span>; <span class="comment">// x 低16位</span></span><br><span class="line"></span><br><span class="line">SendMessage(hWnd, WM_LBUTTONDOWN, <span class="number">0</span>, MAKELPARAM(x,y));</span><br><span class="line">SendMessage(hWnd, WM_LBUTTONUP, <span class="number">0</span>, MAKELPARAM(x, y));</span><br></pre></td></tr></table></figure>
+<h4 id="DLL调试"><a href="#DLL调试" class="headerlink" title="DLL调试"></a>DLL调试</h4><ol>
+<li><p>如果有源码，可以使用VS进行调试，只需要设置启动exe即可</p>
+</li>
+<li><p>如果没有源码，使用OD调试，一般选择在调试的代码处加入特征汇编指令</p>
+</li>
+</ol>
+<p>比如：</p>
+<blockquote>
+<p>Mov eax, eax</p>
+<p>Mov eax, eax</p>
+</blockquote>
+<p><img src="/2018/07/30/扫雷插件分析与编写/9e18c2923104efbed2f342cf7588c007.jpg" alt=""></p>
+<p>在注入 DLL 之后，可以搜索指令 之后，可以搜索指令</p>
+<blockquote>
+<p>选择 DLL 模块 （在模块列表中找到对应，右键跟随入口）</p>
+<p>选择 DLL 模块的代码基址 (进入模块代码之后，拖到最前面)</p>
+<p>使用 Ctrl +S, 搜索</p>
+</blockquote>
+<p><img src="/2018/07/30/扫雷插件分析与编写/94e5ca780b9a35068877aea56fc53644.jpg" alt=""></p>
+<ol>
+<li>在OD中注入DLL</li>
+</ol>
+<p><img src="/2018/07/30/扫雷插件分析与编写/40b9063bea3aa5b2308b8e3caeab97bd.jpg" alt=""></p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">yusakul</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://yoursite.com/2018/07/30/扫雷插件分析与编写/">http://yoursite.com/2018/07/30/扫雷插件分析与编写/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://yoursite.com" target="_blank">梁言</a>！</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="next-post pull-right"><a href="/2018/07/28/20180728 - wireshark截取数据包/"><span>Wireshark抓取数据包</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer><div class="layout" id="footer"><div class="copyright">&copy;2018 By yusakul</div><div class="framework-info"><span>驱动 - </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 - </span><a href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="/js/third-party/anime.min.js"></script><script src="/js/third-party/jquery.min.js"></script><script src="/js/third-party/jquery.fancybox.min.js"></script><script src="/js/third-party/velocity.min.js"></script><script src="/js/third-party/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.5.5"></script><script src="/js/fancybox.js?version=1.5.5"></script><script src="/js/sidebar.js?version=1.5.5"></script><script src="/js/copy.js?version=1.5.5"></script><script src="/js/fireworks.js?version=1.5.5"></script><script src="/js/transition.js?version=1.5.5"></script><script src="/js/scroll.js?version=1.5.5"></script><script src="/js/head.js?version=1.5.5"></script></body></html>
