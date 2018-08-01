@@ -66,7 +66,7 @@
 </ol>
 <p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-7-30/21301896.jpg" alt=""></p>
 <p>再次修改数据，会有代码被记录</p>
-<p><img src="/2018/07/13/扫雷插件分析与编写/49048be67517596bf23372f89a96bad2.jpg" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-8-1/74271743.jpg" alt=""></p>
 <p>代码处：10036AC</p>
 <p>高度：1005338</p>
 <p>宽度：1005334</p>
@@ -90,14 +90,14 @@
 <li>从窗口回调函数开始分析 窗口回调函数开始分析 ，分析鼠标按下消息</li>
 </ol>
 <p>使用 spy++ 查找程序的窗口回调</p>
-<p><img src="/2018/07/13/扫雷插件分析与编写/976126597b584c1d6e3d37875773bcb5.jpg" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-8-1/37585479.jpg" alt=""></p>
 <p>地址：1001BC9</p>
 <h4 id="分析1-从数值变化的代码处开始分析"><a href="#分析1-从数值变化的代码处开始分析" class="headerlink" title="分析1-从数值变化的代码处开始分析"></a>分析1-从数值变化的代码处开始分析</h4><p>从代码处：10036AC开始跟踪分析</p>
-<p><img src="/2018/07/13/扫雷插件分析与编写/14247bbd3b5db04cf18cd790fb5c12dd.jpg" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-8-1/1636825.jpg" alt=""></p>
 <p>修改完数据之后，应该初始化扫雷数组、随机生成雷。</p>
-<p><img src="/2018/07/13/扫雷插件分析与编写/ed79b6f2b6fd70bdb035995faa30ae19.jpg" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-8-1/97530223.jpg" alt=""></p>
 <p>随机生成雷的代码中，是一个循环随机生成雷的x,y 坐标，然后写入到对应缓冲区</p>
-<p><img src="/2018/07/13/扫雷插件分析与编写/df7d476c100622f650314beb54cd575d.jpg" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-8-1/74555288.jpg" alt=""></p>
 <p>基地址：0x1005340</p>
 <p>X坐标计算：随机数+1</p>
 <p>Y坐标计算：(随机数+1)*32</p>
@@ -107,7 +107,7 @@
 <p>4X ：周围有几颗雷就是4X, 41，42，43，44……</p>
 <p>10 ：边界</p>
 <p>有了随机雷的生成，那么在雷生成前面的CALL，应该就是初始化雷区数组的代码，经过调试查看内存，发现真的是。</p>
-<p><img src="/2018/07/13/扫雷插件分析与编写/194aea03198d377f61fa9c969b469304.jpg" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-8-1/61603627.jpg" alt=""></p>
 <p>分析初始化雷区数组代码，发现为三步</p>
 <ol>
 <li><p>初始化全部缓冲区为 0x0 F</p>
@@ -117,7 +117,7 @@
 <li><p>初始化列标记 位 0x 10</p>
 </li>
 </ol>
-<p><img src="/2018/07/13/扫雷插件分析与编写/d50e347024ad8c09949e92ddb0d1bd18.jpg" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-8-1/69131462.jpg" alt=""></p>
 <h4 id="搭建代码框架"><a href="#搭建代码框架" class="headerlink" title="搭建代码框架"></a>搭建代码框架</h4><p>第一步 ，定义一些值和函数</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">WNDPROC g_OldProc = <span class="literal">NULL</span>;</span><br><span class="line">HWND g_hWnd = <span class="literal">NULL</span>;</span><br><span class="line"><span class="function">LRESULT WINAPI <span class="title">WindowProc</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">_In_ HWND hWnd,</span></span></span><br><span class="line"><span class="function"><span class="params">_In_ UINT Msg,</span></span></span><br><span class="line"><span class="function"><span class="params">_In_ WPARAM wParam,</span></span></span><br><span class="line"><span class="function"><span class="params">_In_ LPARAM lParam)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (Msg == WM_KEYDOWN &amp;&amp; wParam == VK_F5)</span><br><span class="line">	&#123;</span><br><span class="line">		CString strString;</span><br><span class="line">		strString.Format(<span class="string">L"wParam = %p"</span>, wParam);</span><br><span class="line">		OutputDebugString(strString.GetBuffer());</span><br><span class="line">		<span class="keyword">return</span> DefWindowProc(hWnd, Msg, wParam, lParam);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> CallWindowProc(g_OldProc, hWnd, Msg, wParam, lParam);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>第二步，修改回调函数</p>
@@ -133,7 +133,7 @@
 <p>窗口回调地址：1001BC9</p>
 <p>在地址处下消息断点WM_LBUTTONDOWN</p>
 <p>在这个消息的lParam参数里是x,y坐标</p>
-<p><img src="/2018/07/13/扫雷插件分析与编写/834f33d46ccbc5e6e9d7d9fa68ad1cb8.jpg" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-8-1/12097114.jpg" alt=""></p>
 <p>将汇编代码翻译为C代码</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">WORD y = HIWORD(lParam);</span><br><span class="line">y = (y - <span class="number">0x27</span>) &gt;&gt; <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line">WORD x = LOWORD(lParam);</span><br><span class="line">x = (x + <span class="number">4</span>) &gt;&gt; <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line">byte byCode = *(byte*)((<span class="keyword">int</span>)g_MineArray + x + y * <span class="number">32</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (byCode == (byte)<span class="number">0x8F</span>)</span><br><span class="line">&#123;</span><br><span class="line">	SetWindowText(hWnd,<span class="string">L"扫雷 - 友情提示：你踩到雷了！"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">	SetWindowText(hWnd, <span class="string">L"扫雷"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="分析-数组下标转屏幕坐标"><a href="#分析-数组下标转屏幕坐标" class="headerlink" title="分析-数组下标转屏幕坐标"></a>分析-数组下标转屏幕坐标</h4><p>将上面的代码反转</p>
@@ -149,16 +149,16 @@
 <p>Mov eax, eax</p>
 <p>Mov eax, eax</p>
 </blockquote>
-<p><img src="/2018/07/13/扫雷插件分析与编写/9e18c2923104efbed2f342cf7588c007.jpg" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-8-1/22022364.jpg" alt=""></p>
 <p>在注入 DLL 之后，可以搜索指令 之后，可以搜索指令</p>
 <blockquote>
 <p>选择 DLL 模块 （在模块列表中找到对应，右键跟随入口）</p>
 <p>选择 DLL 模块的代码基址 (进入模块代码之后，拖到最前面)</p>
 <p>使用 Ctrl +S, 搜索</p>
 </blockquote>
-<p><img src="/2018/07/13/扫雷插件分析与编写/94e5ca780b9a35068877aea56fc53644.jpg" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-8-1/3563233.jpg" alt=""></p>
 <ol>
 <li>在OD中注入DLL</li>
 </ol>
-<p><img src="/2018/07/13/扫雷插件分析与编写/40b9063bea3aa5b2308b8e3caeab97bd.jpg" alt=""></p>
+<p><img src="http://yusakul-blog.oss-cn-shenzhen.aliyuncs.com/18-8-1/27385344.jpg" alt=""></p>
 </div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">yusakul</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://yoursite.com/2018/07/13/扫雷插件分析与编写/">http://yoursite.com/2018/07/13/扫雷插件分析与编写/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://yoursite.com" target="_blank">梁言</a>！</span></div></div><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/逆向工程/">逆向工程</a></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2018/07/13/病毒分析报告-熊猫烧香 /"><i class="fa fa-chevron-left">  </i><span>熊猫烧香变种病毒分析</span></a></div><div class="next-post pull-right"><a href="/2018/07/06/AndroidStudio动态调试smali/"><span>AndroidStudio附加动态调试smali</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer><div class="layout" id="footer"><div class="copyright">&copy;2018 By yusakul</div><div class="framework-info"><span>驱动 - </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 - </span><a href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="/js/third-party/anime.min.js"></script><script src="/js/third-party/jquery.min.js"></script><script src="/js/third-party/jquery.fancybox.min.js"></script><script src="/js/third-party/velocity.min.js"></script><script src="/js/third-party/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.5.5"></script><script src="/js/fancybox.js?version=1.5.5"></script><script src="/js/sidebar.js?version=1.5.5"></script><script src="/js/copy.js?version=1.5.5"></script><script src="/js/fireworks.js?version=1.5.5"></script><script src="/js/transition.js?version=1.5.5"></script><script src="/js/scroll.js?version=1.5.5"></script><script src="/js/head.js?version=1.5.5"></script></body></html>
